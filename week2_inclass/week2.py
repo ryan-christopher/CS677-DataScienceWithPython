@@ -21,7 +21,7 @@ print(createFrameFrom2d(lst), '\n')
 # return the original DataFrame with the column ’Discounted Price’ added. E.g. consider prices = pd.
 # DataFrame([[’Apple’,2],[’Banana’,3],[’Orange’,4]],columns=[’Fruit’,’Cost’]).
 
-def takeTen(frame):
+def takeTen(frame): 
     frame.Cost *= 0.9
     return frame
 
