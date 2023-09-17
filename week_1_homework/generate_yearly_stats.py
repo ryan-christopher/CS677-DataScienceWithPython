@@ -1,8 +1,8 @@
 '''
 Ryan Christopher
 Class: CS 677
-Date: 9/9/2023
-Assignment 1 Question 1
+Date: 9/16/2023
+Assignment 1 Question 1 Part 1
 
 =======Description of Problem=======
 Taking the information of daily stock values for the years 2016-2020,
@@ -23,7 +23,7 @@ def standard_deviation(vals, mean):
 # generate_stats compiles the info displayed in the tables of Question 1. 
 # It takes as input the list of lines containing the daily stock info
 # created by read_stock_data_from_file.py 
-def generate_stats(lines):
+def generate_yearly_stats(lines):
     # create initial values for key value pairs of years and days
     totals = {}
     years = ['2016', '2017', '2018', '2019', '2020']
@@ -62,11 +62,12 @@ def generate_stats(lines):
             totals[year][day]['p_ret_vals'].append(daily_return)
             totals[year][day]['p_ret_sum'] += daily_return
 
+    # table format: mean, sd, neg returns, mean, sd, pos returns, mean, sd
+    print('Mean, SD, Neg Vals, Neg Mean, Neg SD, Pos Vals, Pos Mean, Pos SD')
+
     # iterate through years to calculate stats for each day of the week      
     for year in totals:
         print(year, ':')
-        # table format: mean, sd, neg returns, mean, sd, pos returns, mean, sd
-        print('Mean, SD, Neg Vals, Neg Mean, Neg SD, Pos Vals, Pos Mean, Pos SD')
         # iterate through days and use the corresponding lists of values and
         # sums to calculate means and standard deviations 
         for day in totals[year]:
@@ -88,10 +89,9 @@ def generate_stats(lines):
             # for presenting in table only, multiply averages and standard deviations 
             # by 100 in order to display them as a percentage value and round to four 
             # decimal places
+            # FOR UNROUNDED VALUES: comment out the three lines below
             mean, sd = round(mean * 100, 3), round(sd * 100, 3)
-            nmean, n_sd = round(nmean * 100, 3), round(n_sd * 100, 3)
+            mean, n_sd = round(nmean * 100, 3), round(n_sd * 100, 3)
             pmean, p_sd = round(pmean * 100, 3), round(p_sd * 100, 3)
             
-
-            print('---', day, '---')
-            print(mean, sd, ns, nmean, n_sd, ps, pmean, p_sd, '\n')
+            print(day, ' : ', mean, sd, ns, nmean, n_sd, ps, pmean, p_sd)
