@@ -5,7 +5,9 @@ Date: 9/16/2023
 Assignment 1 Question 6
 
 =======Description of Problem=======
-This file includes the upset oracle for Assignment 1.
+This file includes the upset oracle, where the oracle
+will give wrong information for the best 10 days, the worst 10 days,
+and swapping the 5 best days for the 5 worst days.
 I wanted to name this file episode_III_revenge_of_the_oracle however
 that seemed excessive.
 '''

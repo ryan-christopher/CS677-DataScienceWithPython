@@ -5,8 +5,8 @@ Date: 9/16/2023
 Assignment 1 Questions 4 and 5
 
 =======Description of Problem=======
-This file includes the oracle for Assignment 1,
-as well as the buy and hold method.
+This file includes the oracle telling us which days to invest
+on, as well as the buy and hold method.
 '''
 
 def oracle(stock):
