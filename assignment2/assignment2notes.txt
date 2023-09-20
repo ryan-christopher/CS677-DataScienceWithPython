@@ -1,0 +1,7 @@
+
+to find probability of a n up day, 
+take number of days positive and divide by total number of days
+
+for the ensemble, if 2 = +, 3 = -, and 4 = -, then
+ensemble will be -, whatever the majority is for 2, 3, and 4
+

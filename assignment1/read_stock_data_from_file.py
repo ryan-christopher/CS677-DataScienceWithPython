@@ -24,7 +24,7 @@ from oracle_revenge import wrong_best_ten, wrong_worst_ten, wrong_best_and_worst
 
 ticker1 = 'COST'
 ticker2 = 'SPY'
-input_dir = r'/Users/ryan/Desktop/school/cs677/assignments/week_1_homework/stock_data'
+input_dir = r'/Users/ryan/Desktop/school/cs677/assignments/assignment1/stock_data'
 ticker_file1 = os.path.join(input_dir, ticker1 + '.csv')
 ticker_file2 = os.path.join(input_dir, ticker2 + '.csv')
 
