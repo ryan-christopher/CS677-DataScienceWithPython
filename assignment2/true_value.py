@@ -10,19 +10,9 @@ Then, add in a column of the "True Value" of the stock as a + or -,
 and write a function that can determine the likelihood of a day's "True Value"
 based off the prior sequence of up and down days.
 '''
-
 import pandas as pd
 
-# read CSV data and store into dataframe called stock_data
-stock_data = pd.read_csv('assignment2/stock_data/COST.csv')
-
-# remove extra info that we will not need to use
-stock_data = stock_data.drop(['Week_Number', 'Year_Week', 'Open', 'High', 'Low', 
-                  'Close', 'Volume', 'Adj Close', 'Short_MA', 'Long_MA'], 
-                  axis = 1)
-
 # ========== Part 1 ==========
-
 # determineTrueValue assigns the True Value column to + if the 
 # day's return is positive, and - if the day's return is negative
 def determineTrueValue(df):
@@ -34,21 +24,41 @@ def determineTrueValue(df):
 
 # use the apply method on the dataframe to assign the correct 
 # True Value for each day
-stock_data = stock_data.apply(determineTrueValue, axis = 1)
+def getTable(stock):
+    # read CSV data and store into dataframe called stock_data
+    stock_data = pd.read_csv('assignment2/stock_data/' + stock + '.csv')
+
+    # remove extra info that we will not need to use
+    stock_data = stock_data.drop(['Week_Number', 'Year_Week', 'Open', 'High', 'Low',
+                  'Close', 'Volume', 'Adj Close', 'Short_MA', 'Long_MA'], 
+                  axis = 1)
+    
+    stock_data = stock_data.apply(determineTrueValue, axis = 1)
+
+    return stock_data
+
+stock_data = getTable('COST')
 # print(stock_data)
 
-# ========== Part 2 ==========
 
+# ========== Part 2 ==========
 # taking years 1, 2, and 3, determine the probability
 # of the next day being an "up" day
 
+# create global level string to store sequence of +'s and -'s
+# (global level works best as it is mainly 
+# being used with an apply method)
 true_labels = ""
 
+# gatherValues is a helper function that takes a given
+# day's True Value and adds it to the string true_labels
 def gatherValues(df):
     global true_labels
     if int(df['Year']) < 2019:
         true_labels += df['True Value']
 
+# apply the gatherValues function to the dataframe given 
+# as a parameter, and return the probability of an up day
 def upDayProb(df):
     global true_labels
     true_labels = ""
@@ -57,17 +67,30 @@ def upDayProb(df):
 
 # print(upDayProb(stock_data))
 
-# ========== Part 3 and 4 ==========
 
-def kSequenceProbability(df, sequenceVal, targetVal):
+# ========== Part 3 and 4 ==========
+# taking years 1, 2, and 3, determine the probability
+# that after seeing k number of consecutive days the 
+# next day will be have an opposite value
+def kSequenceProbability(df, sequenceVal, targetVal, kVal):
     global true_labels
     true_labels, probabilities = "", []
+
+    # generate string of True Values 
     df.apply(gatherValues, axis = 1)
-    for k in [1, 2, 3]:
+
+    # calculate probability of each value for k, then append 
+    # result to the list probabilities 
+    for k in range(1, kVal + 1):
          numTarget = true_labels.count((sequenceVal * k) + targetVal)
          numOpposite = true_labels.count((sequenceVal * k) + sequenceVal)
          probabilities.append(numTarget / (numTarget + numOpposite))
+    
+    # return the k number of probabilities 
     return probabilities
 
-print(kSequenceProbability(stock_data, '-', '+'))
-print(kSequenceProbability(stock_data, '+', '-'))
+# probability of up day after k consecutive down days
+# print(kSequenceProbability(stock_data, '-', '+', 3))
+
+# probability of down day after k consecutive up days
+# print(kSequenceProbability(stock_data, '+', '-', 3))

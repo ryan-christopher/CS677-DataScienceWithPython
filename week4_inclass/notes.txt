@@ -1,0 +1,23 @@
+machine learning
+
+predication algorithms
+(linear regression) -> oversimplification is 
+fitting a straight line to data to predict values
+
+usually contrasted with classification algorithms
+
+assignment 2 is a "somewhat naive" maching learning 
+algorithm
+
+"clustering" - grouping data together
+
+each data point is usually referred to as an 
+"object", "record", or "sample"
+
+each component of an object is referred to as 
+a "feature", "explanatory variable", or 
+"predictor"
+
+Dataset should usually be split training/testing in a 
+70/30 or 70/20 ratio
+
