@@ -13,8 +13,13 @@ from true_value import getTable
 stock_data = getTable('COST')
 print(type(stock_data))
 
-def shiftTest(df):
-    return df['True Value'].shift(periods=[0, 1, 2, 3, 4])
+def predictWSequence(df, w):
+    wList = [val for val in range(w + 1)]
+    shiftValues = df['True Value'].shift(periods=wList)
+    for i in range(1, w + 1):
+        df['Day-' + str(i)] = shiftValues['True Value_' + str(i)]
+    print(shiftValues)
+    return df
 
-shift = shiftTest(stock_data)
+shift = predictWSequence(stock_data, 4)
 print(shift)
