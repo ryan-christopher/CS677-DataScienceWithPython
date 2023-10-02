@@ -79,6 +79,11 @@ def kSequenceProbability(df, sequenceVal, targetVal, kVal):
     global true_labels
     true_labels, probabilities = "", []
 
+    if targetVal == '+':
+        oppositeVal = '-'
+    else:
+        oppositeVal = '+'
+
     # generate string of True Labels 
     df.apply(gatherTrainingLabels, axis = 1)
 
@@ -86,7 +91,7 @@ def kSequenceProbability(df, sequenceVal, targetVal, kVal):
     # result to the list probabilities 
     for k in range(1, kVal + 1):
          numTarget = true_labels.count((sequenceVal * k) + targetVal)
-         numOpposite = true_labels.count((sequenceVal * k) + sequenceVal)
+         numOpposite = true_labels.count((sequenceVal * k) + oppositeVal)
          probabilities.append(numTarget / (numTarget + numOpposite))
     
     # return the k number of probabilities 
@@ -96,6 +101,6 @@ def kSequenceProbability(df, sequenceVal, targetVal, kVal):
 # print(kSequenceProbability(cost_stock_data, '-', '+', 3))
 # print(kSequenceProbability(spy_stock_data, '-', '+', 3))
 
-# probability of down day after k consecutive up days
-# print(kSequenceProbability(cost_stock_data, '+', '-', 3))
-# print(kSequenceProbability(spy_stock_data, '+', '-', 3))
+# probability of up day after k consecutive up days
+print(kSequenceProbability(cost_stock_data, '+', '+', 3))
+print(kSequenceProbability(spy_stock_data, '+', '+', 3))
