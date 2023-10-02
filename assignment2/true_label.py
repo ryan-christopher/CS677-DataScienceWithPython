@@ -102,5 +102,5 @@ def kSequenceProbability(df, sequenceVal, targetVal, kVal):
 # print(kSequenceProbability(spy_stock_data, '-', '+', 3))
 
 # probability of up day after k consecutive up days
-print(kSequenceProbability(cost_stock_data, '+', '+', 3))
-print(kSequenceProbability(spy_stock_data, '+', '+', 3))
+# print(kSequenceProbability(cost_stock_data, '+', '+', 3))
+# print(kSequenceProbability(spy_stock_data, '+', '+', 3))
