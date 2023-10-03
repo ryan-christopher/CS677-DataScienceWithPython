@@ -16,5 +16,34 @@ from true_label import getTable
 cost_stock_data = getTable('COST')
 spy_stock_data = getTable('SPY')
 
-print(predictLabels(cost_stock_data, 4))
+def generatePlot(df, stats):
+
+    # find best W value
+    bestW = 0
+    bestWaccuracy = 0
+    for key, value in stats.items():
+        if (key[0] == 'w') and (float(value['Accuracy']) > bestWaccuracy):
+            bestW = key[-1]
+            bestWaccuracy = float(value['Accuracy'])
+    #print(bestW)
+    #print(bestWaccuracy)
+    returns = df['Return'].tolist()
+    bestWlabels = df['w=' + bestW].tolist()
+    ensembleLables = df['Ensemble'].tolist()
+
+    ensembleReturn = 100
+    ensembleReturnList = []
+    for i in range(len(returns)):
+        ensembleReturnList.append(ensembleReturn)
+        ensembleReturn *= (1 + returns[i])
+
+    print(ensembleReturn)
+
+    #amount *= (1 + daily_return)
+    return
+    
+
+data, stats = predictLabels(spy_stock_data, 4)
+generatePlot(data, stats)
+print(data)
 

@@ -130,7 +130,7 @@ def predictLabels(df, w):
     df.apply(calcAccuracy, axis = 1)
 
     for key, vals in accuracies.items():
-        print("KEY : " + key)
+        #print("KEY : " + key)
         vals['Accuracy'] = vals['Correct'].count('True') / len(vals['Correct'])
         vals['TPR'] = vals['TP'] / (vals['TP'] + vals['FN'])
         vals['TNR'] = vals['TN'] / (vals['TN'] + vals['FP'])
@@ -144,7 +144,7 @@ def predictLabels(df, w):
         del accuracies[key]['Correct']
     #print(accuracies)
     #print(df)
-    return df
+    return df, accuracies
 
 
 #print("Cost")
