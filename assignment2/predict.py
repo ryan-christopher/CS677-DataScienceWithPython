@@ -106,10 +106,24 @@ def predictLabels(df, w):
         else:
             df['-' + str(i)] = df['-' + str(i)] + df['-' + str(i - 1)]
 
+    colsOrder = []
 
-    df = df[['-3', '-2', '-1', 'TL', 'Next']]
+    for i in range((w-1) * -1, 0):
+        colsOrder.append(str(i))
+    
+    print(colsOrder)
 
-    df['w=2'], df['w=3'], df['w=4'] = '', '', ''
+    colsOrder.append('TL')
+    colsOrder.append('Next')
+
+    df = df[colsOrder]
+
+    #print(df)
+
+    for i in range(2, w + 1):
+        df['w=' + str(i)] = ''
+
+    #df['w=2'], df['w=3'], df['w=4'] = '', '', ''
 
     df = df.apply(generatePrediction, axis = 1)
 
