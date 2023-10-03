@@ -5,7 +5,7 @@ Date: 10/3/2023
 Assignment 2 Question 2, 3, and 4
 
 =======Description of Problem=======
-predict.py takes 
+predict.py takes a dataframe of 
 '''
 import pandas as pd
 from true_label import getTable
