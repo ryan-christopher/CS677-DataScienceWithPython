@@ -5,7 +5,12 @@ Date: 10/3/2023
 Assignment 2 Question 2, 3, and 4
 
 =======Description of Problem=======
-predict.py takes a dataframe of 
+With the dataframe of daily stock data, create a prediction model that takes
+the past w days where w = 2, 3, and 4, and using the first three years as 
+training data calculate the likelihood of the next day being either positive or
+negative. 
+Then, with the predictions for w = 2, 3, and 4, generate an ensemble prediction
+from the three predictions. 
 '''
 import pandas as pd
 from true_label import getTable
@@ -110,20 +115,15 @@ def predictLabels(df, w):
 
     for i in range((w-1) * -1, 0):
         colsOrder.append(str(i))
-    
-    print(colsOrder)
 
     colsOrder.append('TL')
     colsOrder.append('Next')
+    colsOrder.append('Return')
 
     df = df[colsOrder]
 
-    #print(df)
-
     for i in range(2, w + 1):
         df['w=' + str(i)] = ''
-
-    #df['w=2'], df['w=3'], df['w=4'] = '', '', ''
 
     df = df.apply(generatePrediction, axis = 1)
 
@@ -134,21 +134,21 @@ def predictLabels(df, w):
         vals['Accuracy'] = vals['Correct'].count('True') / len(vals['Correct'])
         vals['TPR'] = vals['TP'] / (vals['TP'] + vals['FN'])
         vals['TNR'] = vals['TN'] / (vals['TN'] + vals['FP'])
-        print('TP', vals['TP'])
-        print('FP', vals['FP'])
-        print('TN', vals['TN'])
-        print('FN', vals['FN'])
-        print('Accuracy', vals['Accuracy'])
-        print('TPR', vals['TPR'])
-        print('TNR', vals['TNR'])
-
-    
+        # print('TP', vals['TP'])
+        # print('FP', vals['FP'])
+        # print('TN', vals['TN'])
+        # print('FN', vals['FN'])
+        # print('Accuracy', vals['Accuracy'])
+        # print('TPR', vals['TPR'])
+        # print('TNR', vals['TNR'])
+        del accuracies[key]['Correct']
     #print(accuracies)
-    
     #print(df)
+    return df
 
 
-print("Cost")
-predictLabels(cost_stock_data, 4)
-print("Spy")
-predictLabels(spy_stock_data, 4)
+#print("Cost")
+#print(predictLabels(cost_stock_data, 4))
+#print("===================")
+#print("Spy")
+#print(predictLabels(spy_stock_data, 4))

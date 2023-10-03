@@ -34,11 +34,7 @@ def getTable(stock):
                 'Volume', 'Adj Close', 'Short_MA', 'Long_MA'], 
                 axis = 1)
     
-    stock_data['Return'] = round(stock_data['Return'] * 100, 5)
-    
     stock_data = stock_data.apply(determineTrueLabel, axis = 1)
-
-    stock_data = stock_data.drop(['Return'], axis = 1)
 
     return stock_data
 
