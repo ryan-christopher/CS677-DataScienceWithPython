@@ -1,7 +1,7 @@
 '''
 Ryan Christopher
 Class: CS 677
-Date: 9/19/2023
+Date: 10/3/2023
 Assignment 2 Question 1
 
 =======Description of Problem=======
@@ -17,9 +17,9 @@ import pandas as pd
 # day's return is positive, and - if the day's return is negative
 def determineTrueLabel(df):
     if float(df['Return']) >= 0:
-        df['True Label'] = '+'
+        df['TL'] = '+'
     else:
-        df['True Label'] = '-'
+        df['TL'] = '-'
     return df
 
 # use the apply method on the dataframe to assign the correct 
@@ -29,11 +29,16 @@ def getTable(stock):
     stock_data = pd.read_csv('assignment2/stock_data/' + stock + '.csv')
 
     # remove extra info that we will not need to use
-    stock_data = stock_data.drop(['Date', 'Week_Number', 'Year_Week', 'Open', 
-                'High', 'Low', 'Close', 'Volume', 'Adj Close', 'Short_MA', 'Long_MA'], 
-                  axis = 1)
+    stock_data = stock_data.drop(['Year', 'Month', 'Day', 'Week_Number',
+                'Year_Week', 'Open', 'Weekday', 'High', 'Low', 'Close', 
+                'Volume', 'Adj Close', 'Short_MA', 'Long_MA'], 
+                axis = 1)
+    
+    stock_data['Return'] = round(stock_data['Return'] * 100, 5)
     
     stock_data = stock_data.apply(determineTrueLabel, axis = 1)
+
+    stock_data = stock_data.drop(['Return'], axis = 1)
 
     return stock_data
 
@@ -56,8 +61,8 @@ true_labels = ""
 # day's True Label and adds it to the string true_labels
 def gatherTrainingLabels(df):
     global true_labels
-    if int(df['Year']) < 2019:
-        true_labels += df['True Label']
+    if int(df['Date'][:4]) < 2019:
+        true_labels += df['TL']
 
 # apply the gatherTrainingLabels function to the dataframe given 
 # as a parameter, and return the probability of an up day

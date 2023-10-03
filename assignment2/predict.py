@@ -1,104 +1,140 @@
 '''
 Ryan Christopher
 Class: CS 677
-Date: 9/19/2023
-Assignment 2 Question 2
+Date: 10/3/2023
+Assignment 2 Question 2, 3, and 4
 
 =======Description of Problem=======
-
+predict.py takes 
 '''
 import pandas as pd
 from true_label import getTable
-global wVal, accuracies, valuesDict
+global wVal, accuracies
 
 cost_stock_data = getTable('COST')
 spy_stock_data = getTable('SPY')
-
-# create global level string to store sequence of +'s and -'s
-# (global level works best as it is mainly 
-# being used with an apply method)
-true_labels = ""
 
 # gatherTrainingLabels is a helper function that takes a given
 # day's True Label and adds it to the string true_labels
 def gatherTrainingLabels(df):
     global true_labels
-    if int(df['Year']) < 2019:
-        true_labels += df['True Label']
-
-
-def generateLabelSequence(df):
-    global wVal
-    for i in range(1, wVal + 1):
-        df["Past" + str(i)] = "*" * i
-    if int(df['Year']) > 2018:
-        sequence = ""
-        for i in range(1, wVal + 1):
-            sequence += df['Day-' + str(i)]
-            df["Past" + str(i)] = sequence
+    df['Date'] = int(df['Date'][:4])
+    if df['Date'] < 2019:
+        true_labels += df['TL']
     return df
 
-
-def generateProbabilities(df):
-    global true_labels
+def generatePrediction(df):
     global wVal
-    if int(df['Year']) > 2018:
-        ensemble = ''
-        for i in range(2, wVal + 1):
-            seqAndUp = true_labels.count(df['Past' + str(i)] + '+')
-            seqAndDown = true_labels.count(df['Past' + str(i)] + '-')
-            if seqAndUp > seqAndDown:
-                df['w=' + str(i)] = '+'
-                ensemble += '+'
-            else:
-                df['w=' + str(i)] = '-'
-                ensemble += '-'
-        if ensemble.count('+') > 1:
-            df['Ensemble'] = '+'
+    ensemble = ''
+    for i in range(2, wVal + 1):
+        upSequence = true_labels.count(df['-' + str(i-1)] + '+')
+        downSequence = true_labels.count(df['-' + str(i-1)] + '-')
+        if upSequence >= downSequence:
+            df['w=' + str(i)] = '+'
+            ensemble += '+'
         else:
-            df['Ensemble'] = '-'
+            df['w=' + str(i)] = '-'
+            ensemble += '-'
+    if ensemble.count('+') > ensemble.count('-'):
+        df['Ensemble'] = '+'
+    else:
+        df['Ensemble'] = '-'
     return df
 
-def calculateAccuracy(df):
-    global wVal, accuracies, valuesDict
-    if int(df['Year']) > 2018:
-        for i in range(2, wVal + 1):
-            if df['w=' + str(i)] == df['True Label']:
-                valuesDict['W=' + str(i)].append(True)
+def calcAccuracy(df):
+    global wVal, accuracies
+    for i in range(2, wVal + 1):
+        if df['w=' + str(i)] == df['Next']:
+            accuracies['w=' + str(i)]['Correct'].append("True")
+            if df['Next'] == '+':
+                accuracies['w=' + str(i)]['TP'] += 1
             else:
-                valuesDict['W=' + str(i)].append(False)
-        if df['Ensemble'] == df['True Label']:
-            valuesDict['Ensemble'].append(True)
+                accuracies['w=' + str(i)]['TN'] += 1
         else:
-            valuesDict['Ensemble'].append(False)
-        
+            accuracies['w=' + str(i)]['Correct'].append("False")
+            if df['Next'] == '+':
+                accuracies['w=' + str(i)]['FN'] += 1
+            else:
+                accuracies['w=' + str(i)]['FP'] += 1
+    if df['Ensemble'] == df['Next']:
+        accuracies['Ensemble']['Correct'].append('True')
+        if df['Next'] == '+':
+            accuracies['Ensemble']['TP'] += 1
+        else:
+            accuracies['Ensemble']['TN'] += 1
+    else:
+        accuracies['Ensemble']['Correct'].append('False')
+        if df['Next'] == '+':
+            accuracies['Ensemble']['FN'] += 1
+        else:
+            accuracies['Ensemble']['FP'] += 1
+
+
+def predictLabels(df, w):
+    global wVal, accuracies, true_labels
+    wVal = w
+    accuracies = {}
+    for i in range(2, w + 1):
+        accuracies['w=' + str(i)] = {
+            'Correct' : [], 'Accuracy' : 0,
+            'TP' : 0, 'FP' : 0, 'TN' : 0,
+            'FN' : 0, 'TPR' : 0, 'TNR' : 0
+        }
+    accuracies['Ensemble'] = {
+        'Correct' : [], 'Accuracy' : 0,
+        'TP' : 0, 'FP' : 0, 'TN' : 0,
+        'FN' : 0, 'TPR' : 0, 'TNR' : 0
+    }
+
+    true_labels = ""
+
+    # GENERATE TRAINING TL SEQUENCE
+    df = df.apply(gatherTrainingLabels, axis = 1)
+
+    # GENERATE SHIFTED COLUMNS
+    shiftValues = df['TL'].shift(periods=[1, 2, 3])
+    for i in range(1, w):
+        df['-' + str(i)] = shiftValues['TL_' + str(i)]
+
+    df['Next'] = df['TL'].shift(-1)
+
+    df = df[df['Date'] > 2018]
+
+    for i in range(1, w):
+        if i == 1:
+            df['-' + str(i)] = df['-' + str(i)] + df['TL']
+        else:
+            df['-' + str(i)] = df['-' + str(i)] + df['-' + str(i - 1)]
+
+
+    df = df[['-3', '-2', '-1', 'TL', 'Next']]
+
+    df['w=2'], df['w=3'], df['w=4'] = '', '', ''
+
+    df = df.apply(generatePrediction, axis = 1)
+
+    df.apply(calcAccuracy, axis = 1)
+
+    for key, vals in accuracies.items():
+        print("KEY : " + key)
+        vals['Accuracy'] = vals['Correct'].count('True') / len(vals['Correct'])
+        vals['TPR'] = vals['TP'] / (vals['TP'] + vals['FN'])
+        vals['TNR'] = vals['TN'] / (vals['TN'] + vals['FP'])
+        print('TP', vals['TP'])
+        print('FP', vals['FP'])
+        print('TN', vals['TN'])
+        print('FN', vals['FN'])
+        print('Accuracy', vals['Accuracy'])
+        print('TPR', vals['TPR'])
+        print('TNR', vals['TNR'])
+
     
-
-def predictWSequence(df, w):
-    global true_labels, wVal, accuracies, valuesDict
-    true_labels, wVal = "", w
-    df.apply(gatherTrainingLabels, axis = 1)
-    wList = [val for val in range(w + 1)]
-    shiftValues = df['True Label'].shift(periods=wList)
-    for i in range(1, w + 1):
-        df['Day-' + str(i)] = shiftValues['True Label_' + str(i)]
-    df = df.apply(generateLabelSequence, axis = 1)
-    #print(df)
-    df = df.apply(generateProbabilities, axis = 1)
-    df = df.dropna()
-    #print(df)
-    accuracies, valuesDict = {}, {}
-    for i in range(2, wVal + 1):
-        valuesDict['W=' + str(i)] = []
-    valuesDict['Ensemble'] = []
-    df.apply(calculateAccuracy, axis = 1)
-    #print(valuesDict)
-    for i in range(2, wVal + 1):
-        accuracies['W=' + str(i) + ' Accuracy : '] = str(valuesDict['W=' + str(i)].count(True) / len(valuesDict['W=' + str(i)]))
-    accuracies['Ensemble'] = str(valuesDict['Ensemble'].count(True) / len(valuesDict['Ensemble']))
     #print(accuracies)
-    print(df.to_string())
-    return df
+    
+    #print(df)
 
-cost_stock_data = predictWSequence(cost_stock_data, 4)
-#spy_stock_data = predictWSequence(spy_stock_data, 4)
+
+print("Cost")
+predictLabels(cost_stock_data, 4)
+print("Spy")
+predictLabels(spy_stock_data, 4)
