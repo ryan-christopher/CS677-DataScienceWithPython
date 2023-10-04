@@ -12,6 +12,30 @@ based off the prior sequence of up and down days.
 '''
 import pandas as pd
 
+# countOccurences takes in string s and sequence string seq,
+# and counts the total number of occurences of seq in s
+def countOccurences(s, seq):
+    matches = 0
+    # set s and seq to list of chars
+    s = [*s]
+    seq = [*seq]
+    # go through s up until len(s) - len(seq)
+    for i in range(len(s) - len(seq)):
+        # if first character found, search through the rest of the
+        # sequences length
+        if s[i] == seq[0]:
+            k = 0
+            potentialMatch = True
+            while k < len(seq):
+                if s[i+k] != seq[k]:
+                    potentialMatch = False
+                k+=1
+            # add to total if still a match
+            if potentialMatch == True:
+                matches += 1
+    return matches
+
+
 # ========== Part 1 ==========
 # determineTrueLabel assigns the True Label column to + if the 
 # day's return is positive, and - if the day's return is negative
@@ -88,21 +112,29 @@ def kSequenceProbability(df, sequenceVal, targetVal, kVal):
 
     # generate string of True Labels 
     df.apply(gatherTrainingLabels, axis = 1)
+    #print(true_labels)
 
     # calculate probability of each value for k, then append 
     # result to the list probabilities 
     for k in range(1, kVal + 1):
-         numTarget = true_labels.count((sequenceVal * k) + targetVal)
-         numOpposite = true_labels.count((sequenceVal * k) + oppositeVal)
+         numTarget = countOccurences(true_labels, (sequenceVal * k) + targetVal)
+         #print("numTarget", numTarget)
+         numOpposite = countOccurences(true_labels, (sequenceVal * k) + oppositeVal)
+         #numTarget = true_labels.count((sequenceVal * k) + targetVal)
+         #numOpposite = true_labels.count((sequenceVal * k) + oppositeVal)
          probabilities.append(numTarget / (numTarget + numOpposite))
     
     # return the k number of probabilities 
     return probabilities
 
 # probability of up day after k consecutive down days
+# print("COST")
 # print(kSequenceProbability(cost_stock_data, '-', '+', 3))
+# print("SPY")
 # print(kSequenceProbability(spy_stock_data, '-', '+', 3))
 
 # probability of up day after k consecutive up days
+# print("COST")
 # print(kSequenceProbability(cost_stock_data, '+', '+', 3))
+# print("SPY")
 # print(kSequenceProbability(spy_stock_data, '+', '+', 3))

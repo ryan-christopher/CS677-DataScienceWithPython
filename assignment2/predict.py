@@ -13,7 +13,7 @@ Then, with the predictions for w = 2, 3, and 4, generate an ensemble
 prediction from the three predictions. 
 '''
 import pandas as pd
-from true_label import getTable
+from true_label import getTable, countOccurences
 global wVal, accuracies
 
 cost_stock_data = getTable('COST')
@@ -52,10 +52,12 @@ def generatePrediction(df):
     for i in range(2, wVal + 1):
 
         # generate number of sequences ending in '+'
-        upSequence = true_labels.count(df['-' + str(i-1)] + '+')
+        upSequence = countOccurences(true_labels, df['-' + str(i-1)] + '+')
+        #upSequence = true_labels.count(df['-' + str(i-1)] + '+')
 
         # generate number of sequences ending in '-'
-        downSequence = true_labels.count(df['-' + str(i-1)] + '-')
+        downSequence = countOccurences(true_labels, df['-' + str(i-1)] + '-')
+        #downSequence = true_labels.count(df['-' + str(i-1)] + '-')
 
         # assign prediction for next day to '+' if there are more occurences 
         # of the sequence ending in '+' than the sequence ending in '-'
@@ -153,7 +155,6 @@ def predictLabels(df, w):
     # generate training label sequence to update 
     # true_labels
     df = df.apply(gatherTrainingLabels, axis = 1)
-    print(true_labels)
 
     # generate shifted columns to store previous w days
     # worth of true labels
@@ -201,6 +202,16 @@ def predictLabels(df, w):
         vals['Accuracy'] = vals['Correct'].count('True') / len(vals['Correct'])
         vals['TPR'] = vals['TP'] / (vals['TP'] + vals['FN'])
         vals['TNR'] = vals['TN'] / (vals['TN'] + vals['FP'])
+
+        # print("KEY : " + key)
+        # print('TP', vals['TP'])
+        # print('FP', vals['FP'])
+        # print('TN', vals['TN'])
+        # print('FN', vals['FN'])
+        # print('Accuracy', vals['Accuracy'])
+        # print('TPR', vals['TPR'])
+        # print('TNR', vals['TNR'])
+
         # remove Correct list to make prining the accuracies dict not 
         # take up the entire page
         del accuracies[key]['Correct']
@@ -208,7 +219,7 @@ def predictLabels(df, w):
     # return both the dataframe and accuracies dictionary
     return df, accuracies
 
-#print("Cost")
-#print(predictLabels(cost_stock_data, 4))
-#print("Spy")
-print(predictLabels(spy_stock_data, 4))
+# print("Cost")
+# print(predictLabels(cost_stock_data, 4))
+# print("Spy")
+# print(predictLabels(spy_stock_data, 4))
