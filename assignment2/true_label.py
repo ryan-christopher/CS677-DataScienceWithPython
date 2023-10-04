@@ -13,7 +13,7 @@ based off the prior sequence of up and down days.
 import pandas as pd
 
 # ========== Part 1 ==========
-# determine TrueLabel assigns the True Label column to + if the 
+# determineTrueLabel assigns the True Label column to + if the 
 # day's return is positive, and - if the day's return is negative
 def determineTrueLabel(df):
     if float(df['Return']) >= 0:
@@ -34,6 +34,7 @@ def getTable(stock):
                 'Volume', 'Adj Close', 'Short_MA', 'Long_MA'], 
                 axis = 1)
     
+    # call determineTrueLabel on each row of the dataframe
     stock_data = stock_data.apply(determineTrueLabel, axis = 1)
 
     return stock_data
