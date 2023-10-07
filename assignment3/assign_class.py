@@ -10,7 +10,6 @@ and create a column 'color'. Then, assign each data entry either green or red
 depending on it's class and for each feature and class determine the mean and 
 standard deviation (rounded to 2 decimal places)
 '''
-
 import pandas as pd
 import numpy as np
 
@@ -59,7 +58,7 @@ def analyzeFrame(df):
         green_entries[term], red_entries[term] = [], []
 
         # iterate through all_entries
-        for entry in range(len(all_entries[term])):
+        for entry in range(len(all_entries[term])):    
             # add current entry to green_entries dict if class 0
             if df.loc[entry]['Color'] == 'green':
                 green_entries[term].append(all_entries[term][entry])
@@ -78,8 +77,23 @@ def analyzeFrame(df):
         green_entries[term + ' - sd'] = np.std(green_entries[term])
         red_entries[term + ' - mean'] = np.mean(red_entries[term])
         red_entries[term + ' - sd'] = np.std(red_entries[term])
-    
-    print(red_entries)
+
+        # remove lists to make print statements more readable 
+        del all_entries[term], green_entries[term], red_entries[term]
+
+    # print("===== All Entries =====")
+    # for key, value in all_entries.items():
+    #     print(key)
+    #     print(value)
+    # print("===== Green Entries =====") 
+    # for key, value in green_entries.items():
+    #     print(key)
+    #     print(value)
+    # print("===== Red Entries =====")
+    # for key, value in red_entries.items():
+    #     print(key)
+    #     print(value)
+
 
     
     
