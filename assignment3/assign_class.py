@@ -95,10 +95,6 @@ def analyzeFrame(df):
     #     print(value)
 
 
-    
-    
-
-
-
 bank_note_data = createFrame()
+# print(bank_note_data)
 analyzeFrame(bank_note_data)
