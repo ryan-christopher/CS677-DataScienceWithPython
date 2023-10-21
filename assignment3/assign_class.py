@@ -37,7 +37,7 @@ def setColor(df):
         df['Color'] = 'green'
     else:
         df['Color'] = 'red'
-
+    # return row with assigned color
     return df
 
 
@@ -57,7 +57,7 @@ def analyzeFrame(df):
         green_entries[term], red_entries[term] = [], []
 
         # iterate through all_entries
-        for entry in range(len(all_entries[term])):    
+        for entry in range(len(all_entries[term])):  
             # add current entry to green_entries dict if class 0
             if df.loc[entry]['Color'] == 'green':
                 green_entries[term].append(all_entries[term][entry])

@@ -66,7 +66,8 @@ def logReg(train, test):
     y_predict = log_reg.predict(x_test)
     
     # create dataframe as entry for bill x with my BUID numbers
-    buid = pd.DataFrame({'Variance' : [0.3360], 'Skewness' : [0.3360], 'Curtosis' : [0.3360], 'Entropy' : [0.3360]})
+    buid = pd.DataFrame({'Variance' : [0.3360], 'Skewness' : [0.3360], 
+                         'Curtosis' : [0.3360], 'Entropy' : [0.3360]})
     
     # display prediction from bill x
     # print(log_reg.predict(buid))
@@ -105,7 +106,8 @@ def logRegFeatureSelect(train, test):
         y_predict = log_reg.predict(x_test_feature)
 
         # append the accuracy to feature_accuracies list
-        feature_accuracies.append(["Misssing feature:", feature, "Accuracy:", accuracy_score(y_test, y_predict)])
+        feature_accuracies.append(["Misssing feature:", feature, 
+                                   "Accuracy:", accuracy_score(y_test, y_predict)])
     
     # display list of accuracies missing each feature
     for feature in feature_accuracies:

@@ -134,7 +134,8 @@ def knnFeatureSelect(train, test, k):
         y_predict = classifier.predict(x_test_scaled)
 
         # append the accuracy to feature_accuracies list
-        feature_accuracies.append(["Misssing feature:", feature, "Accuracy:", accuracy_score(y_test, y_predict)])
+        feature_accuracies.append(["Misssing feature:", feature, 
+                                   "Accuracy:", accuracy_score(y_test, y_predict)])
 
     # display list of accuracies missing each feature
     for feature in feature_accuracies:
