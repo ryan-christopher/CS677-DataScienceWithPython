@@ -86,4 +86,4 @@ def generatePairwise(df):
     print('TNR', tn / (tn + fp))
     
 
-generatePairwise(bank_note_data)
+#generatePairwise(bank_note_data)

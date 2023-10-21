@@ -95,4 +95,4 @@ def analyzeFrame(df):
 
 
 bank_note_data = createFrame()
-analyzeFrame(bank_note_data)
+#analyzeFrame(bank_note_data)
