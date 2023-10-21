@@ -16,28 +16,32 @@ from matplotlib import pyplot as plt
 from assign_class import createFrame
 from sklearn.model_selection import train_test_split
 
+
 # create dataframe with banknote data
 bank_note_data = createFrame()
 
 
-# create a simple classifier
+# applies simple classifier logic to each row of the dataframe
 def simpleClassifier(df):
-    # variance > 0, skewness > 0, curtosis > 0, if TWO of the three are true 
-    # then it is real
-    # otherwise, it is fake
+    # variance > 0, skewness > 0, curtosis > 0, if TWO of 
+    # the three are true then it is real
     if ((df['Variance'] > 0 and df['Skewness'] > 0) or 
         (df['Variance'] > 0 and df['Curtosis'] > 0) or
         (df['Skewness'] > 0 and df['Curtosis'] > 0)):
         df['SC-Guess'] = 'green'    
+    # otherwise, it is fake
     else:
         df['SC-Guess'] = 'red'
     
-    # assign the 
+    # assign a True/False indicator to show which values 
+    # were correctly/incorrectly guessed
     if df['Color'] == df['SC-Guess']:
         df['SC-Result'] = 'True'
     else:
         df['SC-Result'] = 'False'
+
     return df
+
 
 # generatePairwise takes as input a dataframe, splits the 
 # data into two sets as a 50/50 split, and outputs the 
@@ -47,7 +51,7 @@ def generatePairwise(df):
     # train, test = train_test_split(df, test_size = 0.5, train_size = 0.5)
     
     # save split datasets to csv files for consistency 
-    # ==== DO NOT UNCOMMENT ==== - will overwrite saved datasets
+    # ==== DO NOT UNCOMMENT NEXT 2 LINES ==== will overwrite saved datasets
     # train.to_csv('train.csv',index=False)
     # test.to_csv('test.csv',index=False)
 
@@ -65,20 +69,18 @@ def generatePairwise(df):
     # plt.show()
 
     test_data = test_data.apply(simpleClassifier, axis = 1)
-    print(test_data)
-    print(len(test_data))
 
     # after simple classifier applied, determine stats
-    # for TP and FP
+    # for TP, FP, TN, FN, Accuracy, TPR, and TNR
     tp = len(test_data.where((test_data['Color'] == 'green') & (test_data['SC-Result'] == 'True')).dropna())
     fp = len(test_data.where((test_data['Color'] == 'green') & (test_data['SC-Result'] == 'False')).dropna())
     tn = len(test_data.where((test_data['Color'] == 'red') & (test_data['SC-Result'] == 'True')).dropna())
     fn = len(test_data.where((test_data['Color'] == 'red') & (test_data['SC-Result'] == 'False')).dropna())
     acc = test_data['SC-Result'].value_counts()['True'] / len(test_data)
-    print('TP:', tp)
-    print('FP:', fp)
-    print('TN:', tn)
-    print('FN:', fn)
+
+    # display performance measures
+    print('TP:', tp, 'FP:', fp)
+    print('TN:', tn, 'FN:', fn)
     print('Accuracy:', acc)
     print('TPR', tp / (tp + fn))
     print('TNR', tn / (tn + fp))

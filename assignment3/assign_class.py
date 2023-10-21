@@ -14,7 +14,6 @@ import pandas as pd
 import numpy as np
 
 
-# ===== Part 1 =====
 # createFrame takes the notedata txt file and returns a dataframe
 # with the appropriate columns as well as the correctly assigned 
 # color for each entry
@@ -38,10 +37,10 @@ def setColor(df):
         df['Color'] = 'green'
     else:
         df['Color'] = 'red'
+
     return df
 
 
-# ===== Part 2 =====
 # analyzeFrame takes the dataframe of banknotes as input, and calculates
 # the mean and standard deviation for each class and each feature
 def analyzeFrame(df):
@@ -96,5 +95,4 @@ def analyzeFrame(df):
 
 
 bank_note_data = createFrame()
-# print(bank_note_data)
 analyzeFrame(bank_note_data)
