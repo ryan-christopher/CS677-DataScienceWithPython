@@ -66,11 +66,11 @@ def logReg(train, test):
     y_predict = log_reg.predict(x_test)
     
     # create dataframe as entry for bill x with my BUID numbers
-    buid = pd.DataFrame({'Variance' : [0.3360], 'Skewness' : [0.3360], 
-                         'Curtosis' : [0.3360], 'Entropy' : [0.3360]})
+    buid = pd.DataFrame({'Variance' : [3], 'Skewness' : [3], 
+                         'Curtosis' : [6], 'Entropy' : [0]})
     
     # display prediction from bill x
-    # print(log_reg.predict(buid))
+    print(log_reg.predict(buid))
 
     # display accuracy
     print(accuracy_score(y_test, y_predict))

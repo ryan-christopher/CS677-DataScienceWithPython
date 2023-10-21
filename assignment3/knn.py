@@ -40,11 +40,11 @@ def calcBestKStats(prediction, test):
     tn = len(test.where((test['Class'] == 1.0) & (test['k'] == test['Class'])).dropna())
     fn = len(test.where((test['Class'] == 1.0) & (test['k'] != test['Class'])).dropna())
     acc = len(test.where(test['k'] == test['Class']).dropna()) / len(test)
-    # print('TP:', tp, 'FP:', fp)
-    # print('TN:', tn, 'FN:', fn)
-    # print('Accuracy:', acc)
-    # print('TPR', tp / (tp + fn))
-    # print('TNR', tn / (tn + fp))
+    print('TP:', tp, 'FP:', fp)
+    print('TN:', tn, 'FN:', fn)
+    print('Accuracy:', acc)
+    print('TPR', tp / (tp + fn))
+    print('TNR', tn / (tn + fp))
 
 
 # knn takes the train and test data as parameters, applies the standard scaler,
@@ -77,13 +77,13 @@ def knn(train, test):
         # predict test values using classifier fit to train values
         y_predict = classifier.predict(x_test_scaled)
 
-        if k == 5:
+        if k == 7:
             # call calcBestKStats when k = 5 to generate  
             # performance measures
             calcBestKStats(y_predict, y_test)
 
             # predict bill x containing the last 4 digits of my BUID
-            buid_predict = classifier.predict([[0.3360, 0.3360, 0.3360, 0.3360]])
+            buid_predict = classifier.predict([[3, 3, 6, 0]])
             print(buid_predict)
 
         # append the accuracy to k_accuracies list
@@ -143,4 +143,4 @@ def knnFeatureSelect(train, test, k):
 
 
 #knn(train_data, test_data)
-#knnFeatureSelect(train_data, test_data, 5)
+#knnFeatureSelect(train_data, test_data, 7)
