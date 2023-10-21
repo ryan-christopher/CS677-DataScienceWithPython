@@ -142,4 +142,4 @@ def knnFeatureSelect(train, test, k):
 
 
 #knn(train_data, test_data)
-knnFeatureSelect(train_data, test_data, 5)
+#knnFeatureSelect(train_data, test_data, 5)

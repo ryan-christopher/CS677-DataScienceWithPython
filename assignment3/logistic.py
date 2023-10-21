@@ -113,4 +113,4 @@ def logRegFeatureSelect(train, test):
 
 
 #logReg(train_data, test_data)
-logRegFeatureSelect(train_data, test_data)
+#logRegFeatureSelect(train_data, test_data)
