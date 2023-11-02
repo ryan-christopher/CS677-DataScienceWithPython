@@ -36,8 +36,9 @@ def getHeartData():
     class_0 = heart_data.where(heart_data['DEATH_EVENT'] == 0).dropna().drop('DEATH_EVENT', axis = 1)
     class_1 = heart_data.where(heart_data['DEATH_EVENT'] == 1).dropna().drop('DEATH_EVENT', axis = 1)
 
-    print(class_0)
-    print(class_1)
+    print(class_1.corr())
+    #print(class_0)
+    #print(class_1)
 
     # use seaborn pairplot to generate plot for each class
     # sns.pairplot(class_0)
@@ -46,3 +47,13 @@ def getHeartData():
 
 
 getHeartData()
+
+
+# for write up -
+# 3a - serum creatinine and serum sodium appear to have the highest correlation in surviving patients
+# 3b - serum sodium and creatinine phosph appear to have the lowest correlatin in surviving patients
+# 3c - creatinine phosph and serum sodium appear to have the highest correlation in deceased patients
+# 3d - platelets and serum sodium appear to have the lowest correlation in deceased patients
+# 3e - 3b and 3c are the same, however 3a and 3d are not
+
+
