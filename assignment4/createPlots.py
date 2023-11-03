@@ -45,6 +45,4 @@ def getHeartData():
     # sns.pairplot(class_1)
     # plt.show()
 
-
 getHeartData()
-
