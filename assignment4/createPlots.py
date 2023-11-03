@@ -48,12 +48,3 @@ def getHeartData():
 
 getHeartData()
 
-
-# for write up -
-# 3a - serum creatinine and serum sodium appear to have the highest correlation in surviving patients
-# 3b - serum sodium and creatinine phosph appear to have the lowest correlatin in surviving patients
-# 3c - creatinine phosph and serum sodium appear to have the highest correlation in deceased patients
-# 3d - platelets and serum sodium appear to have the lowest correlation in deceased patients
-# 3e - 3b and 3c are the same, however 3a and 3d are not
-
-
