@@ -36,7 +36,7 @@ def getHeartData():
     class_0 = heart_data.where(heart_data['DEATH_EVENT'] == 0).dropna().drop('DEATH_EVENT', axis = 1)
     class_1 = heart_data.where(heart_data['DEATH_EVENT'] == 1).dropna().drop('DEATH_EVENT', axis = 1)
 
-    print(class_1.corr())
+    #print(class_1.corr())
     #print(class_0)
     #print(class_1)
 
@@ -44,5 +44,6 @@ def getHeartData():
     # sns.pairplot(class_0)
     # sns.pairplot(class_1)
     # plt.show()
+    return class_0, class_1
 
 getHeartData()
