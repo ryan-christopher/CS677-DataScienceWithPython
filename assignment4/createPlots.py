@@ -36,14 +36,16 @@ def getHeartData():
     class_0 = heart_data.where(heart_data['DEATH_EVENT'] == 0).dropna().drop('DEATH_EVENT', axis = 1)
     class_1 = heart_data.where(heart_data['DEATH_EVENT'] == 1).dropna().drop('DEATH_EVENT', axis = 1)
 
-    #print(class_1.corr())
-    #print(class_0)
-    #print(class_1)
-
-    # use seaborn pairplot to generate plot for each class
-    # sns.pairplot(class_0)
-    # sns.pairplot(class_1)
+    # adjust size of figure to include feature names
+    # plt.figure(figsize = (20,12))
+    # use heatmap function from sns to show correlation 
+    # matrices
+    # sns.heatmap(class_0.corr(), annot = True)
+    # plt.title("Class 0 Heat Map")
+    # sns.heatmap(class_1.corr(), annot = True)
+    # plt.title("Class 1 Heat Map")
     # plt.show()
+
     return class_0, class_1
 
 getHeartData()
