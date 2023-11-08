@@ -132,7 +132,7 @@ def applyModel(class_num, reg_model):
         residuals = y_test - y_predict
 
     elif reg_model in ['Log(y) GLM']:
-        residuals = np.log(y_test) - y_predict
+        residuals = y_test - np.exp(y_predict)
 
 
     # use residuals to calculate SSE
