@@ -27,8 +27,8 @@ def assignClass():
     normal = ctg.where(ctg['NSP'] == 1).dropna().drop('NSP', axis = 1)
     abnormal = ctg.where(ctg['NSP'] != 1).dropna().drop('NSP', axis = 1)
 
-    # update NSP label to be N for normal and A for abnormal
-    normal['NSP'], abnormal['NSP'] = 'N', 'A'
+    # update NSP label to be 0 for normal and 1 for abnormal
+    normal['NSP'], abnormal['NSP'] = '1', '0'
 
     # join the two dataframes together once class names updated
     ctg = pd.concat([normal, abnormal]).sort_index()
