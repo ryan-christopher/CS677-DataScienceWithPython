@@ -2,7 +2,7 @@
 Ryan Christopher
 Class: CS 677
 Date: 11/17/2023
-Assignment 5 Question 3
+Assignment 5 Question 4
 
 =======Description of Problem=======
 Take the dataset and split it 50/50, train Random Forest on the training set for n values 
@@ -35,7 +35,9 @@ def randomForest():
     # split set
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.5, 
                                    train_size = 0.5, random_state = 13)
-
+    
+    # create best_combination dictionary to store the attributes of the best
+    # combination of n and d
     best_combination = {
         'n' : 0,
         'd' : 0,
@@ -44,6 +46,12 @@ def randomForest():
         'y_predict' : []
     }
 
+    # initialize figure for plotting 
+    fig = plt.figure()
+    fig.suptitle("Error Rates", fontsize=14)
+
+    # iterate through n (1-10) d times (1-5) and for each n and d train the random forest
+    # classifier 
     for n in range(1, 11):
         for d in range(1, 6):
             # instantiate random forest classifier with n subtrees and max depth d
@@ -55,14 +63,16 @@ def randomForest():
 
             # display accuracy
             acc = accuracy_score(y_test, y_predict)
-            #print(acc)
+            
+            # if current accuracy is better than the stored accuracy, overwrite 
+            # best_combination data
             if acc > best_combination['accuracy']:
                 best_combination['n'] = n
                 best_combination['d'] = d
                 best_combination['accuracy'] = acc
                 best_combination['error rate'] = 1 - acc
                 best_combination['y_predict'] = y_predict
-    
+            plt.plot()
     print(best_combination['accuracy'])
     print(best_combination['n'])
     print(best_combination['d'])    
