@@ -36,7 +36,7 @@ def decisionTree():
                                    train_size = 0.5, random_state = 13)
 
     # instantiate decision tree model
-    model = DecisionTreeClassifier()
+    model = DecisionTreeClassifier(random_state = 13)
 
     # fit data to model and predict
     model.fit(x_train, y_train)
