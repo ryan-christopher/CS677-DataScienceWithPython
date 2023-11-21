@@ -60,7 +60,7 @@ def randomForest():
             if d not in error_scores.keys():
                 error_scores[d] = []
             # instantiate random forest classifier with n subtrees and max depth d
-            model = RandomForestClassifier(n_estimators = n, max_depth = d, criterion = 'entropy', random_state = 13)
+            model = RandomForestClassifier(n_estimators = n, max_depth = d, criterion = 'gini', random_state = 13)
 
             # fit data to model and predict
             model.fit(x_train, y_train)
@@ -84,7 +84,7 @@ def randomForest():
 
     # plot error scores
     for i in range(1, 6):
-        plt.plot(error_scores[i], marker = 'o', label = "d = " + str(i))
+        plt.plot(range(1, 11) , error_scores[i], marker = 'o', label = "d = " + str(i))
 
     # set x and y labels, show legend, then display plot
     plt.xlabel('value of n')
