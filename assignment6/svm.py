@@ -15,12 +15,10 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
-from sklearn.svm import LinearSVC 
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
-from sklearn.metrics import classification_report
 
 # the last digit in my id is 0, so I'll say that my remainder R is
 # 0 as my result is undefined.
@@ -62,9 +60,10 @@ def applySVM(seeds, kernelType):
 
         # instantiate svc
         linear_svm = SVC(kernel=kernelType)
+        # fit to train data
         linear_svm.fit(x_train, y_train)
+        # predict y values
         y_predict = linear_svm.predict(x_test)
-        print(y_predict)
 
         # display accuracy
         print(accuracy_score(y_test, y_predict))
@@ -75,6 +74,7 @@ def applySVM(seeds, kernelType):
                 xticklabels=["L = 1", "L = 2"], yticklabels=["L = 1", "L = 2"])
         plt.xlabel('true label')
         plt.ylabel('predicted label')
+        plt.suptitle(kernelType)
 
         # display heatmap
         plt.show()

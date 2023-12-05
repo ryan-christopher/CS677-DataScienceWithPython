@@ -9,8 +9,6 @@ Taking the logitstic regression classifier to the dataset, compute the accuracy 
 the confusion matrix. Then, compare it to the three SVMs from the prior 
 question.
 '''
-import pandas as pd
-import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -35,10 +33,9 @@ def logReg(seeds):
 
     # initialize logisticregression method
     log_reg = LogisticRegression()
-
     # fit to training data
     log_reg.fit(x_train,y_train)
-
+    # predict y values
     y_predict = log_reg.predict(x_test)
 
     # display accuracy
@@ -50,6 +47,7 @@ def logReg(seeds):
                 xticklabels=["L = 1", "L = 2"], yticklabels=["L = 1", "L = 2"])
     plt.xlabel('true label')
     plt.ylabel('predicted label')
+    plt.suptitle("logistic")
 
     # display heatmap
     plt.show()
