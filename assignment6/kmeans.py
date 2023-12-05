@@ -19,3 +19,44 @@ data set.
 Part 5 - Taking the new classifier from part 4, consider the same two labels used 
 for SVM and calculate the accuracy and confusion matrix. 
 '''
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.cluster import KMeans
+
+
+def loadDataset():
+    # store column names
+    col_names = ["Area", "Perimeter", "Compactness", "Length", "Width", "Asymmetry",
+                "GrooveLength", "Class"]
+    
+    # read CSV data and store into dataframe
+    seed_data = pd.read_csv('assignment6/data/seeds_dataset.csv', names = col_names, 
+                            header=None, delim_whitespace=True)
+    
+    return seed_data
+
+seeds = loadDataset()
+
+def findBestK(seeds, max_k):
+    x = seeds.iloc[:, 0:7]
+    y = seeds['Class']
+    sse = []
+    for i in range(1,max_k+1):
+        kmeans = KMeans(n_clusters=i, n_init='auto')
+        kmeans.fit(x)
+        sse.append(kmeans.inertia_)
+    plt.plot(range(1,max_k+1), sse, '-b')
+    plt.xlabel('k')
+    plt.ylabel('Inertia (SSE)')
+    plt.title('Knee Plot')
+    plt.show()
+
+findBestK(seeds, 8)
+

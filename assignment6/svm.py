@@ -16,6 +16,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 from sklearn.svm import LinearSVC 
+from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
@@ -43,80 +44,42 @@ def loadData():
 
 seeds = loadData()
 
-def linearSVM(seeds):
+# applySVM takes a dataset and kernel type as input then splits the dataset with
+# a 50/50 split and fits the train data to the specified kernel type of SVM. 
+# It then predicts the y values for the test data, calculates the accuracy, 
+# and displayes 
+def applySVM(seeds, kernelType):
 
-    train, test = train_test_split(seeds, test_size = 0.5, 
+        # split dataset 50/50
+        train, test = train_test_split(seeds, test_size = 0.5, 
                                        train_size = 0.5, random_state = 13)
+        
+        # gather train and test data
+        x_train = train.iloc[:,0:7]
+        y_train = train["Class"]
+        x_test = test.iloc[:, 0:7]
+        y_test = test["Class"]
 
-    X = train.iloc[:,0:7]
-    y = train.iloc[:,7:8]
+        # instantiate svc
+        linear_svm = SVC(kernel=kernelType)
+        linear_svm.fit(x_train, y_train)
+        y_predict = linear_svm.predict(x_test)
+        print(y_predict)
 
-    c = 100 # for margin
-    linear_svm = LinearSVC(C=c,loss="hinge", max_iter = 5000)
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+        # display accuracy
+        print(accuracy_score(y_test, y_predict))
+    
+        # compute confusion matrix, then plot corresponding heatmap
+        mat = confusion_matrix(y_test, y_predict)
+        sns.heatmap(mat.T, square=True, annot=True, fmt = 'd', cbar=True, 
+                xticklabels=["L = 1", "L = 2"], yticklabels=["L = 1", "L = 2"])
+        plt.xlabel('true label')
+        plt.ylabel('predicted label')
 
-    linear_svm.fit(X_scaled, y)
-    y.describe
-
-    x_min, x_max = X_scaled[:, 0].min() - 1, X_scaled[:, 0].max() + 1
-    y_min, y_max = X_scaled[:, 1].min() - 1, X_scaled[:, 1].max() + 1
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
-    Z = linear_svm.predict(np.c_[xx.ravel(), yy.ravel()])
-
-    # Put the result into a color plot
-    Z = Z.reshape(xx.shape)
-    plt.figure(figsize=(16,12))
-    plt.contourf(xx, yy, Z, cmap='RdBu')
-
-    # Separate observations that are occupied or not for plotting
-    X_occ = X_scaled[[i for i in range(len(y)) if y[i] == 1],:]
-    X_not_occ = X_scaled[[i for i in range(len(y)) if y[i] == 0],:]
-
-    # Make scatterplots
-    not_occ = plt.scatter(X_not_occ[:,0], X_not_occ[:,1], marker='o', color='r')
-    yes_occ = plt.scatter(X_occ[:,0], X_occ[:,1], marker='^', color='b')
-
-    # Find paramters to make margins
-    w = linear_svm.coef_[0]
-    b = linear_svm.intercept_[0]
-    x_points = np.linspace(x_min, x_max)
-    y_points = -(w[0] / w[1]) * x_points - b / w[1]
-
-    # Getting margin
-    w_hat = linear_svm.coef_[0] / (np.sqrt(np.sum(linear_svm.coef_[0] ** 2))) # normal vector to decision boundary
-    margin = 1 / np.sqrt(np.sum(linear_svm.coef_[0] ** 2))
-
-    boundary_points = np.array(list(zip(x_points, y_points)))
-    above = boundary_points + w_hat * margin
-    below = boundary_points - w_hat * margin
-
-    # Above margin
-    plt.plot(above[:, 0],
-            above[:, 1],
-            'k--',
-            linewidth=2)
-
-    # Below margin
-    plt.plot(below[:, 0],
-            below[:, 1],
-            'k--',
-            linewidth=2)
-
-    # Make legend
-    plt.legend((not_occ,yes_occ),
-            ('Not Occupied', 'Occupied'),
-            title='True Labels',
-            scatterpoints=1,
-            loc='lower right',
-            ncol=1,
-            fontsize=8)
-    plt.xlabel("CO2 z-score")
-    plt.ylabel("HumidityRatio z-score")
-    plt.title("Linear SVM Decision Boundary for Two Features (C = %i)" % (c))
-    plt.xlim([x_min,x_max])
-    plt.ylim([y_min,y_max])
-    plt.show()
+        # display heatmap
+        plt.show()
 
 
-print(linearSVM(seeds))
+applySVM(seeds, "linear")
+applySVM(seeds, "rbf")
+applySVM(seeds, "poly")
