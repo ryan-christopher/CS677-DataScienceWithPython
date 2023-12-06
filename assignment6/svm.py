@@ -58,12 +58,17 @@ def applySVM(seeds, kernelType):
         x_test = test.iloc[:, 0:7]
         y_test = test["Class"]
 
+        # scale values using StandardScaler
+        standardScaler = StandardScaler()
+        x_train_scaled = standardScaler.fit_transform(x_train)
+        x_test_scaled = standardScaler.fit_transform(x_test)
+
         # instantiate svc
         linear_svm = SVC(kernel=kernelType)
         # fit to train data
-        linear_svm.fit(x_train, y_train)
+        linear_svm.fit(x_train_scaled, y_train)
         # predict y values
-        y_predict = linear_svm.predict(x_test)
+        y_predict = linear_svm.predict(x_test_scaled)
 
         # display accuracy
         print(accuracy_score(y_test, y_predict))

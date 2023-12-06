@@ -45,14 +45,22 @@ def loadDataset():
 seeds = loadDataset()
 
 def findBestK(seeds, max_k):
+    # separate data from class
     x = seeds.iloc[:, 0:7]
-    y = seeds['Class']
     sse = []
-    for i in range(1,max_k+1):
-        kmeans = KMeans(n_clusters=i, n_init='auto')
-        kmeans.fit(x)
+
+    # scale values using StandardScaler
+    standardScaler = StandardScaler()
+    x_scaled = standardScaler.fit_transform(x)
+
+    # iterate through values for k, storing sse on each iteration
+    for i in range(1, max_k + 1):
+        kmeans = KMeans(n_clusters = i, n_init = 'auto')
+        kmeans.fit(x_scaled)
         sse.append(kmeans.inertia_)
-    plt.plot(range(1,max_k+1), sse, '-b')
+
+    # plot values   
+    plt.plot(range(1, max_k + 1), sse, '-b')
     plt.xlabel('k')
     plt.ylabel('Inertia (SSE)')
     plt.title('Knee Plot')
