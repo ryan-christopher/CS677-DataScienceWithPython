@@ -1,34 +1,70 @@
 import pandas as pd
 import numpy as np
 import pygame
-import pygame
+from pygame.locals import *
+
+class Note(pygame.sprite.Sprite):
+    def __init__(self, pic, x, y):
+        super().__init__()
+        self.pic = pygame.image.load(pic)
+        self.pic = pygame.transform.scale(self.pic, (25, 75))
+        self.rect = self.pic.get_rect()
+        self.rect.move_ip(x, y)
+        self.isActive = True
+
+    def update(self, events):
+        pressed_keys = pygame.key.get_pressed()
+        #if pressed_keys[K_UP]:
+            #self.rect.move_ip(0, -5)
+        #if pressed_keys[K_DOWN]:
+            #self.rect.move_ip(0,5)
+        if self.isActive == True:
+            if pressed_keys[pygame.K_w]:
+                self.rect.move_ip(0, -5)
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONUP:
+                    if self.rect.collidepoint(event.pos):
+                        self.isActive = not self.isActive
+                        print(self.isActive)
+
+    def draw(self, surface):
+        surface.blit(self.pic, self.rect)
+
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((1080, 720))
 clock = pygame.time.Clock()
 running = True
 dt = 0
 
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+
+note1 = Note("final_project/assets/quarternote.png", 400, 400)
+note2 = Note("final_project/assets/quarternote.png", 450, 400)
+note3 = Note("final_project/assets/quarternote.png", 500, 400)
+
 
 while running:
-    for event in pygame.event.get():
+    events = pygame.event.get()
+    for event in events:
         if event.type == pygame.QUIT:
             running = False
-    screen.fill("#3a3a3a")
+        elif event.type == MOUSEBUTTONDOWN:
+            print(pygame.mouse.get_pos())
+    screen.fill("#dfddd1")
+    note1.update(events)
+    note1.draw(screen)
+    note2.update(events)
+    note2.draw(screen)
+    note3.update(events)
+    note3.draw(screen)
 
-    pygame.draw.circle(screen, "red", player_pos, 40)
-
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
-    if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
-    if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
-    if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
+    # if keys[pygame.K_s]:
+    #     player_pos.y += 300 * dt
+    # if keys[pygame.K_a]:
+    #     player_pos.x -= 300 * dt
+    # if keys[pygame.K_d]:
+    #     player_pos.x += 300 * dt
 
     # flip() the display to put work on screen
     pygame.display.flip()
