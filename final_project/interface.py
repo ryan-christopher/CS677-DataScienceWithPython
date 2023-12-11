@@ -45,7 +45,7 @@ class Note(pygame.sprite.Sprite):
                         self.rect.move_ip(0, -10)
                     mixer.Sound.play(mixer.Sound("final_project/assets/" + str(self.noteVal) + ".wav"))
                 elif event.key == K_DOWN:
-                    if self.noteVal > 58:
+                    if self.noteVal > 60:
                         self.noteVal -= 1
                         self.rect.move_ip(0, 10)
                     mixer.Sound.play(mixer.Sound("final_project/assets/" + str(self.noteVal) + ".wav"))
@@ -66,7 +66,7 @@ class Note(pygame.sprite.Sprite):
 # note input group
 notes = pygame.sprite.Group()
 notelist = []
-xval, yval = 150, 93
+xval, yval = 150, 103
 
 for x in range(8):
     note = Note("final_project/assets/qn.png", xval, yval, x)
@@ -79,6 +79,8 @@ for note in notelist:
 # set up window
 pygame.init()
 screen = pygame.display.set_mode((1080, 720))
+pygame.display.set_caption("Bayesian Brahmsian")
+pygame.display.set_icon(pygame.image.load("final_project/assets/qn.png"))
 clock = pygame.time.Clock()
 running = True
 w, h = pygame.display.get_surface().get_size()
@@ -112,10 +114,17 @@ while running:
 
     for i in range(5):
         pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 130+(20*i), w, 3))
+    
+    for x in range(len(notes)):
+        if notelist[x].noteVal > 64:
+            pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(151+(100*x), 110, 30, 3))
+            if notelist[x].noteVal > 66:
+                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(151+(100*x), 90, 30, 3)) 
 
     for note in notes:
         note.update(events)
         note.draw(screen)
+
 
     # flip() the display to put work on screen
     pygame.display.flip()
