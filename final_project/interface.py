@@ -63,6 +63,7 @@ class Note(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
 
+
 # note input group
 notes = pygame.sprite.Group()
 notelist = []
@@ -76,6 +77,35 @@ for x in range(8):
 for note in notelist:
     notes.add(note)
 
+class Play(pygame.sprite.Sprite):
+    def __init__(self):
+        self.pic = pygame.image.load("final_project/assets/play.png")
+        self.pic = pygame.transform.scale(self.pic, (40, 40))
+        self.rect = self.pic.get_rect()
+        self.rect.move_ip(950, 40)
+        self.playing = False
+
+    def update(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.rect.collidepoint(event.pos):
+                    self.playing = not self.playing
+                    if self.playing == True:
+                        self.pic = pygame.image.load("final_project/assets/pause.png")
+                        for i in range(8):
+                            notelist[i].toggleActive()
+                            print("test", i)
+                        self.playing = False
+                        self.last_update = -1
+                    else:
+                        self.pic = pygame.image.load("final_project/assets/play.png")
+                    self.pic = pygame.transform.scale(self.pic, (40, 40))
+    
+
+    def draw(self, surface):
+        surface.blit(self.pic, self.rect)
+
+playbtn = Play()
 # set up window
 pygame.init()
 screen = pygame.display.set_mode((1080, 720))
@@ -85,7 +115,8 @@ clock = pygame.time.Clock()
 running = True
 w, h = pygame.display.get_surface().get_size()
 
-
+timer = 0
+# use frame rate to implement timer!!! 
 while running:
     screen.fill("#dfddd1")
     events = pygame.event.get()
@@ -113,7 +144,11 @@ while running:
                 notelist[activeID].toggleActive()
 
     for i in range(5):
-        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(0, 130+(20*i), w, 3))
+        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 130+(20*i), w-100, 3))
+    
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(520, 130, 3, 83))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1020, 130, 3, 83))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1030, 130, 4, 83))
     
     for x in range(len(notes)):
         if notelist[x].noteVal > 64:
@@ -125,10 +160,14 @@ while running:
         note.update(events)
         note.draw(screen)
 
-
+    playbtn.update(events)
+    playbtn.draw(screen)
     # flip() the display to put work on screen
     pygame.display.flip()
     # limits FPS to 30
     dt = clock.tick(30) / 1000
+
+
+    
 
 pygame.quit()
