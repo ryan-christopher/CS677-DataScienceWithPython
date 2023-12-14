@@ -8,8 +8,11 @@ data = data.drop(['backend','composition_time', 'country', 'loops_listened', 're
 #print("input sequence")
 noteinput = data['input_sequence']
 notevals = {}
+inputsequence = []
 for note in noteinput[0][0]['notes']:
     notevals[str(note['pitch'])] = []
+    inputsequence.append(note['pitch'])
 print(notevals)
-for note in data['output_sequence'][0][0]['notes']:
-    print(note['pitch'])
+print(inputsequence)
+#for note in data['output_sequence'][0][0]['notes']:
+#    print(note['pitch'])
