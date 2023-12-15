@@ -84,7 +84,7 @@ class Play(pygame.sprite.Sprite):
         self.pic = pygame.image.load("final_project/assets/play.png")
         self.pic = pygame.transform.scale(self.pic, (40, 40))
         self.rect = self.pic.get_rect()
-        self.rect.move_ip(950, 40)
+        self.rect.move_ip(950, 100)
         self.playing = False
 
     def draw(self, surface):
@@ -102,10 +102,27 @@ class GenerateBtn(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
 
+
+class Staff(pygame.sprite.Sprite):
+    def __init__(self, pic, x, y, scalex, scaley):
+        self.pic = pygame.image.load(pic)
+        self.pic = pygame.transform.scale(self.pic, (scalex, scaley))
+        self.rect = self.pic.get_rect()
+        self.rect.move_ip(x, y)
+    
+    def draw(self, surface):
+        surface.blit(self.pic, self.rect)
+
+
+treble = Staff("final_project/assets/treble.png", 45, 220, 70, 110)
+bass = Staff("final_project/assets/bass.png", 55, 380, 50, 65)
+brace = Staff("final_project/assets/brace.png", -10, 218, 50, 250)
+
+
 # note input group
 notes = pygame.sprite.Group()
 notelist = []
-xval, yval = 150, 103
+xval, yval = 150, 203
 
 for x in range(8):
     note = Note("final_project/assets/qn.png", xval, yval, x)
@@ -164,9 +181,9 @@ while running:
                     inputsequence = []
                     for note in notelist:
                         inputsequence.append(note.noteVal)
-                    note2seq = [57, 57, 57, 56, 57, 57, 57, 50]
-                    note3seq = [43, 42, 43, 41, 43, 42, 43, 41]
-                    note4seq = [27, 26, 24, 24, 27, 27, 26, 24]
+                    note2seq = [55, 55, 57, 55, 55, 55, 51, 55]
+                    note3seq = [43, 43, 43, 43, 43, 43, 43, 43]
+                    note4seq = [24, 24, 24, 24, 26, 26, 25, 24]
                     playbtn.playing = True
                     playingnotes = True
                     if activeID != None:
@@ -210,17 +227,20 @@ while running:
             activeID = None
 
     for i in range(5):
-        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 130+(20*i), w-100, 3))
-    
-    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(520, 130, 3, 83))
-    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1020, 130, 3, 83))
-    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1030, 130, 4, 83))
+        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 230+(20*i), w-100, 3))
+        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 375+(20*i), w-100, 3))
+     
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 230, 3, 228))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(520, 230, 3, 228))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1020, 230, 3, 228))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1030, 230, 4, 228))
+
     
     for x in range(len(notes)):
         if notelist[x].noteVal > 68:
-            pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(151+(100*x), 110, 30, 3))
+            pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(151+(100*x), 210, 30, 3))
             if notelist[x].noteVal > 71:
-                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(151+(100*x), 90, 30, 3)) 
+                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(151+(100*x), 190, 30, 3)) 
         if notelist[x].noteVal in [61, 66, 68]:
             screen.blit(font.render("#", True, (0, 0, 0)), (notelist[x].rect[0]-10, notelist[x].rect[1]+47))
         elif notelist[x].noteVal in [63, 70]:
@@ -234,9 +254,12 @@ while running:
     playbtn.draw(screen)
     generatebtn.update(events)
     generatebtn.draw(screen)
+    treble.draw(screen)
+    bass.draw(screen)
+    brace.draw(screen)
 
     for i in range(8):
-        screen.blit(font.render(str(notelist[i].noteVal) + " - " + str(valtoNotes[notelist[i].noteVal]), True, (0, 0, 0)), (160+(100*i), 30))
+        screen.blit(font.render(str(notelist[i].noteVal) + " - " + str(valtoNotes[notelist[i].noteVal]), True, (0, 0, 0)), (145+(100*i), 130))
 
     # flip() the display to put work on screen
     pygame.display.flip()

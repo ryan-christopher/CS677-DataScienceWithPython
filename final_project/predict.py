@@ -15,4 +15,4 @@ for note in noteinput[0][0]['notes']:
 print(notevals)
 print(inputsequence)
 #for note in data['output_sequence'][0][0]['notes']:
-#    print(note['pitch'])
+#    print(note['pitch'])  
