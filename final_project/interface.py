@@ -93,14 +93,11 @@ class Play(pygame.sprite.Sprite):
 
 class GenerateBtn(pygame.sprite.Sprite):
     def __init__(self):
-        self.pic = pygame.image.load("final_project/assets/play.png")
-        self.pic = pygame.transform.scale(self.pic, (40, 40))
-        self.rect = self.pic.get_rect()
-        self.rect.move_ip(950, 600)
+        self.rect = pygame.Rect((950, 600), (100, 100))
         self.playing = False
 
     def draw(self, surface):
-        surface.blit(self.pic, self.rect)
+        surface.blit(font.render("Generate", True, (0, 0, 0)), (950, 600))
 
 
 class Staff(pygame.sprite.Sprite):
@@ -181,9 +178,9 @@ while running:
                     inputsequence = []
                     for note in notelist:
                         inputsequence.append(note.noteVal)
-                    note2seq = [55, 55, 57, 55, 55, 55, 51, 55]
-                    note3seq = [43, 43, 43, 43, 43, 43, 43, 43]
-                    note4seq = [24, 24, 24, 24, 26, 26, 25, 24]
+                    note2seq = [62, 62, 67, 65, 65, 65, 65, 64]
+                    note3seq = [59, 62, 59, 62, 60, 60, 60, 60]
+                    note4seq = [43, 43, 55, 53, 52, 57, 60, 45]
                     playbtn.playing = True
                     playingnotes = True
                     if activeID != None:
