@@ -53,6 +53,7 @@ def knn(train, test):
     # gather train/test x and y values from split data sets
     x_train = train.iloc[:, 0:4]
     y_train = train['Class']
+    print(y_train)
     x_test = test.iloc[:, 0:4]
     y_test = test['Class']
 
