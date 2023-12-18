@@ -4,29 +4,17 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-#TO DO: 
-# first goal is to create  a 2d arrray of chords at each soprano point in time
-# create 4 dictionaries separated by voice
-# get list of Soprano values from start step from OUTPUT SEQUENCE
-# go through each of the other 3 voices and gather corresponding note values at each S point in time
-# store as 2d array
 
-data = pd.read_json(path_or_buf='final_project/data-test-1.jsonl', lines=True)
-#data = pd.read_json(path_or_buf='final_project/bach-doodle-1k.jsonl', lines=True)
+data = pd.read_json(path_or_buf='final_project/data-test-100.jsonl', lines=True)
 data = data.drop(['backend','composition_time', 'country', 'loops_listened', 'request_id', 'session_id'], axis = 1)
 
-#print(data)
-
-noteinput = data['input_sequence']
-notevals = {}
-inputsequence = []
 
 bassdf = pd.DataFrame(columns = ["Soprano", "Prev", "Class"])
 tenordf = pd.DataFrame(columns = ["Soprano", "Bass", "Prev", "Class"])
 altodf = pd.DataFrame(columns = ["Soprano", "Bass", "Tenor", "Prev", "Class"])
 
-def format_output(df):
 
+def format_output(df):
     global bassdf
     global tenordf
     global altodf
@@ -44,7 +32,6 @@ def format_output(df):
             tenor.append([note['startTime'], note['pitch']])
         else:
             bass.append([note['startTime'], note['pitch']])
-
     x = 0
     while x < len(soprano):
         if x < len(alto):
@@ -89,35 +76,37 @@ def format_output(df):
         
     return df
 
+
 data = data.apply(format_output, axis = 1)
 
-
-
-# print(bassdf)
-# print(tenordf)
-# print(altodf)
-    
-#print(bassdf)
-
-bass_train, bass_test = train_test_split(bassdf, test_size = 0.25, train_size = 0.75, random_state = 13)
-
-# gather train/test x and y values from split data sets
-x_train = bass_train.iloc[:, 0:2]
-#print(bass_train.iloc[:, 2])
-y_train = bass_train["Class"].astype(int)
-x_test = bass_test.iloc[:, 0:2]
-y_test = bass_test["Class"].astype(int)
-
-# initialize logisticregression method
+bass_train, bass_test = train_test_split(bassdf, test_size = 0.2, train_size = 0.8, random_state = 13)
+bass_x_train = bass_train.iloc[:, 0:2]
+bass_y_train = bass_train["Class"].astype(int)
+bass_x_test = bass_test.iloc[:, 0:2]
+bass_y_test = bass_test["Class"].astype(int)
 bass_log_reg = LogisticRegression(multi_class='ovr', solver='liblinear')
-# fit to training data
-bass_log_reg.fit(x_train,y_train)
-# predict using test data
-y_predict = bass_log_reg.predict(x_test)
-#print(y_train)
-print(y_test)
-print(y_predict)
-# display accuracy
-print(accuracy_score(y_test, y_predict))
+bass_log_reg.fit(bass_x_train,bass_y_train)
+bass_y_predict = bass_log_reg.predict(bass_x_test)
+print(accuracy_score(bass_y_test, bass_y_predict))
 
+tenor_train, tenor_test = train_test_split(tenordf, test_size = 0.2, train_size = 0.8, random_state = 13)
+tenor_x_train = tenor_train.iloc[:, 0:3]
+tenor_y_train = tenor_train["Class"].astype(int)
+tenor_x_test = tenor_test.iloc[:, 0:3]
+tenor_y_test = tenor_test["Class"].astype(int)
+tenor_log_reg = LogisticRegression(multi_class='ovr', solver='liblinear')
+tenor_log_reg.fit(tenor_x_train,tenor_y_train)
+tenor_y_predict = tenor_log_reg.predict(tenor_x_test)
+print(accuracy_score(tenor_y_test, tenor_y_predict))
 
+alto_train, alto_test = train_test_split(altodf, test_size = 0.2, train_size = 0.8, random_state = 13)
+alto_x_train = alto_train.iloc[:, 0:4]
+alto_y_train = alto_train["Class"].astype(int)
+alto_x_test = alto_test.iloc[:, 0:4]
+alto_y_test = alto_test["Class"].astype(int)
+alto_log_reg = LogisticRegression(multi_class='ovr', solver='liblinear')
+alto_log_reg.fit(alto_x_train,alto_y_train)
+alto_y_predict = alto_log_reg.predict(alto_x_test)
+print(accuracy_score(alto_y_test, alto_y_predict))
+
+testinput = [67, 62, 60, 62, 67, 69, 66, 67]
