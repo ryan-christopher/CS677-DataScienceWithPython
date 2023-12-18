@@ -3,6 +3,7 @@ import numpy as np
 import pygame
 from pygame.locals import *
 import pygame.mixer as mixer
+from predict import generate
 
 activeID = None
 playingnotes = False
@@ -78,6 +79,35 @@ class Note(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
 
+class PredictedNote(pygame.sprite.Sprite):
+    def __init__(self, pic, x, y, id, voice):
+        super().__init__()
+        self.pic = pygame.image.load(pic)
+        self.pic = pygame.transform.scale(self.pic, (35, 70))
+        self.rect = self.pic.get_rect()
+        self.rect.move_ip(x, y)
+        self.id = id
+        self.noteVal = 60
+        self.voice = voice
+
+    def update(self):
+        if self.voice == "alto":
+            if self.noteVal == 60:
+                self.move_ip(10, 0)
+
+        elif self.voice == "tenor":
+            if self.noteVal == 60:
+                self.move_ip(10, 0)
+
+        elif self.voice == "bass":
+            if self.noteVal == 60:
+                self.move_ip(10, 0)
+    
+    
+    def draw(self, surface):
+        surface.blit(self.pic, self.rect)
+
+
 
 class Play(pygame.sprite.Sprite):
     def __init__(self):
@@ -118,8 +148,17 @@ brace = Staff("final_project/assets/brace.png", -10, 218, 50, 250)
 
 # note input group
 notes = pygame.sprite.Group()
+altonotes = pygame.sprite.Group()
+tenornotes = pygame.sprite.Group()
+bassnotes = pygame.sprite.Group()
 notelist = []
+altonoteslist = []
+tenornoteslist = []
+bassnoteslist = []
 xval, yval = 150, 203
+altox, altoy = 0, 0
+tenorx, tenory = 0, 0
+bassx, bassy = 0, 0
 
 for x in range(8):
     note = Note("final_project/assets/qn.png", xval, yval, x)
@@ -128,6 +167,16 @@ for x in range(8):
 
 for note in notelist:
     notes.add(note)
+
+for j in range(8):
+    note = PredictedNote("final_project/assets/qn.png", xval, yval, x)
+
+for k in range(8):
+    note = PredictedNote("final_project/assets/qn.png", xval, yval, x)
+
+for l in range(8):
+    note = PredictedNote("final_project/assets/qn.png", xval, yval, x)
+
 
 playbtn = Play()
 generatebtn = GenerateBtn()
@@ -144,6 +193,8 @@ w, h = pygame.display.get_surface().get_size()
 timer = 0
 
 font = pygame.font.Font(pygame.font.get_default_font(), 22)
+
+note2seq, note3seq, note4seq = [], [], []
  
 while running:
     screen.fill("#dfddd1")
@@ -177,10 +228,7 @@ while running:
                 if playbtn.playing == False:
                     inputsequence = []
                     for note in notelist:
-                        inputsequence.append(note.noteVal)
-                    note2seq = [62, 62, 67, 65, 65, 65, 65, 64]
-                    note3seq = [59, 62, 59, 62, 60, 60, 60, 60]
-                    note4seq = [43, 43, 55, 53, 52, 57, 60, 45]
+                        inputsequence.append(note.noteVal)                   
                     playbtn.playing = True
                     playingnotes = True
                     if activeID != None:
@@ -199,7 +247,7 @@ while running:
                 inputsequence = []
                 for note in notelist:
                     inputsequence.append(note.noteVal)
-                print(inputsequence)
+                note2seq, note3seq, note4seq = generate(inputsequence)
         
     if playbtn.playing == True:
         playtime += 1
@@ -246,7 +294,7 @@ while running:
     for note in notes:
         note.update(events)
         note.draw(screen)
-
+        
     playbtn.update(events)
     playbtn.draw(screen)
     generatebtn.update(events)
@@ -258,7 +306,8 @@ while running:
     for i in range(8):
         screen.blit(font.render(str(notelist[i].noteVal) + " - " + str(valtoNotes[notelist[i].noteVal]), True, (0, 0, 0)), (145+(100*i), 130))
 
-    # flip() the display to put work on screen
+
+
     pygame.display.flip()
     # limits FPS to 30
     dt = clock.tick(30) / 1000
