@@ -338,6 +338,12 @@ while running:
             if notelist[x].noteVal > 71:
                 pygame.draw.rect(screen, (0, 0, 0), 
                                  pygame.Rect(151+(100*x), 190, 30, 3)) 
+        if tenornotelist[x].noteVal > 46:
+            pygame.draw.rect(screen, (0, 0, 0), 
+                             pygame.Rect(151+(100*x), 375, 30, 3))
+        if bassnotelist[x].noteVal < 41:
+            pygame.draw.rect(screen, (0, 0, 0), 
+                             pygame.Rect(151+(100*x), 497, 30, 3))
         if notelist[x].noteVal in [61, 66, 68]:
             screen.blit(font.render("#", True, (0, 0, 0)), 
                         (notelist[x].rect[0]-10, notelist[x].rect[1]+47))
