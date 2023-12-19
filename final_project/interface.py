@@ -22,6 +22,7 @@ valtoNotes = {
     72 : "C"
 }
 
+
 GENERATE = pygame.USEREVENT + 1
 
 class Note(pygame.sprite.Sprite):
@@ -94,23 +95,56 @@ class PredictedNote(pygame.sprite.Sprite):
         if self.voice == 'alto':
             self.noteVal = 60
         elif self.voice == 'tenor':
-            self.noteval = 48
+            self.noteVal = 48
         elif self.voice == 'bass':
-            self.noteval = 48
+            self.noteVal = 48
 
     def update(self, events):
         for event in events:
             if event.type == GENERATE:
                 if self.voice == 'alto' and self.noteVal < note2seq[self.id]:
                     while self.noteVal < note2seq[self.id]:
-                        self.noteVal += 1
-                        if self.noteVal not in [60, 63, 65, 67, 70]:
+                        if self.noteVal in [60, 63, 65, 67, 70, 48, 51, 53, 55, 58]:
+                            self.rect.move_ip(0, 0)
+                        else:
                             self.rect.move_ip(0, -10)
+                        self.noteVal += 1
                 if self.voice == 'alto' and self.noteVal > note2seq[self.id]:
                     while self.noteVal > note2seq[self.id]:
-                        self.noteVal -= 1
-                        if self.noteVal not in [61, 64, 66, 68, 71]:
+                        if self.noteVal in [61, 64, 66, 68, 71, 49, 52, 54, 56, 59]:
+                            self.rect.move_ip(0, 0)
+                        else:
                             self.rect.move_ip(0, 10)
+                        self.noteVal -= 1
+                if self.voice == 'tenor' and self.noteVal < note3seq[self.id]:
+                    while self.noteVal < note3seq[self.id]:
+                        if self.noteVal in [60, 63, 65, 67, 70, 48, 51, 53, 55, 58]:
+                            self.rect.move_ip(0, 0)
+                        else:
+                            self.rect.move_ip(0, -10)
+                        self.noteVal += 1
+                if self.voice == 'tenor' and self.noteVal > note3seq[self.id]:
+                    while self.noteVal > note3seq[self.id]:
+                        if self.noteVal in [61, 64, 66, 68, 71, 49, 52, 54, 56, 59]:
+                            self.rect.move_ip(0, 0)
+                        else:
+                            self.rect.move_ip(0, 10)
+                        self.noteVal -= 1
+                if self.voice == 'bass' and self.noteVal < note4seq[self.id]:
+                    while self.noteVal < note4seq[self.id]:
+                        if self.noteVal in [60, 63, 65, 67, 70, 48, 51, 53, 55, 58, 36, 39, 41, 43, 46, 24, 27, 29, 31, 34]:
+                            self.rect.move_ip(0, 0)
+                        else:
+                            self.rect.move_ip(0, -10)
+                        self.noteVal += 1
+                if self.voice == 'bass' and self.noteVal > note4seq[self.id]:
+                    while self.noteVal > note4seq[self.id]:
+                        if self.noteVal in [61, 64, 66, 68, 71, 49, 52, 54, 56, 59, 37, 40, 42, 44, 47, 25, 28, 30, 32, 35]:
+                            self.rect.move_ip(0, 0)
+                        else:
+                            self.rect.move_ip(0, 10)
+                        self.noteVal -= 1
+
 
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
@@ -258,6 +292,9 @@ while running:
                 for note in notelist:
                     inputsequence.append(note.noteVal)
                 note2seq, note3seq, note4seq = generate(inputsequence)
+                for x in range(len(note4seq)):
+                    if note4seq[x] < 40:
+                        note4seq[x] += 12
                 pygame.event.post(pygame.event.Event(GENERATE))
         
     if playbtn.playing == True:
