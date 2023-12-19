@@ -22,6 +22,8 @@ valtoNotes = {
     72 : "C"
 }
 
+GENERATE = pygame.USEREVENT + 1
+
 class Note(pygame.sprite.Sprite):
     def __init__(self, pic, x, y, id):
         super().__init__()
@@ -84,29 +86,34 @@ class PredictedNote(pygame.sprite.Sprite):
         super().__init__()
         self.pic = pygame.image.load(pic)
         self.pic = pygame.transform.scale(self.pic, (35, 70))
+        self.pic.set_alpha(128)
         self.rect = self.pic.get_rect()
         self.rect.move_ip(x, y)
         self.id = id
-        self.noteVal = 60
         self.voice = voice
+        if self.voice == 'alto':
+            self.noteVal = 60
+        elif self.voice == 'tenor':
+            self.noteval = 48
+        elif self.voice == 'bass':
+            self.noteval = 48
 
-    def update(self):
-        if self.voice == "alto":
-            if self.noteVal == 60:
-                self.move_ip(10, 0)
+    def update(self, events):
+        for event in events:
+            if event.type == GENERATE:
+                if self.voice == 'alto' and self.noteVal < note2seq[self.id]:
+                    while self.noteVal < note2seq[self.id]:
+                        self.noteVal += 1
+                        if self.noteVal not in [60, 63, 65, 67, 70]:
+                            self.rect.move_ip(0, -10)
+                if self.voice == 'alto' and self.noteVal > note2seq[self.id]:
+                    while self.noteVal > note2seq[self.id]:
+                        self.noteVal -= 1
+                        if self.noteVal not in [61, 64, 66, 68, 71]:
+                            self.rect.move_ip(0, 10)
 
-        elif self.voice == "tenor":
-            if self.noteVal == 60:
-                self.move_ip(10, 0)
-
-        elif self.voice == "bass":
-            if self.noteVal == 60:
-                self.move_ip(10, 0)
-    
-    
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
-
 
 
 class Play(pygame.sprite.Sprite):
@@ -123,11 +130,11 @@ class Play(pygame.sprite.Sprite):
 
 class GenerateBtn(pygame.sprite.Sprite):
     def __init__(self):
-        self.rect = pygame.Rect((950, 600), (100, 100))
+        self.rect = pygame.Rect((900, 600), (100, 100))
         self.playing = False
 
     def draw(self, surface):
-        surface.blit(font.render("Generate", True, (0, 0, 0)), (950, 600))
+        surface.blit(font.render("Generate", True, (0, 0, 0)), (900, 600))
 
 
 class Staff(pygame.sprite.Sprite):
@@ -142,8 +149,8 @@ class Staff(pygame.sprite.Sprite):
 
 
 treble = Staff("final_project/assets/treble.png", 45, 220, 70, 110)
-bass = Staff("final_project/assets/bass.png", 55, 380, 50, 65)
-brace = Staff("final_project/assets/brace.png", -10, 218, 50, 250)
+bass = Staff("final_project/assets/bass.png", 55, 400, 50, 65)
+brace = Staff("final_project/assets/brace.png", -10, 218, 50, 270)
 
 
 # note input group
@@ -151,14 +158,9 @@ notes = pygame.sprite.Group()
 altonotes = pygame.sprite.Group()
 tenornotes = pygame.sprite.Group()
 bassnotes = pygame.sprite.Group()
-notelist = []
-altonoteslist = []
-tenornoteslist = []
-bassnoteslist = []
-xval, yval = 150, 203
-altox, altoy = 0, 0
-tenorx, tenory = 0, 0
-bassx, bassy = 0, 0
+notelist, altonotelist, tenornotelist, bassnotelist = [], [], [], []
+xval, yval, altox, altoy = 150, 203, 145, 249
+tenorx, tenory, bassx, bassy = 150, 317, 145, 435
 
 for x in range(8):
     note = Note("final_project/assets/qn.png", xval, yval, x)
@@ -168,15 +170,23 @@ for x in range(8):
 for note in notelist:
     notes.add(note)
 
-for j in range(8):
-    note = PredictedNote("final_project/assets/qn.png", xval, yval, x)
+for n in range(8):
+    altonote = PredictedNote("final_project/assets/qn-down.png", altox, altoy, n, voice = "alto")
+    altox += 100
+    altonotelist.append(altonote)
+    tenornote = PredictedNote("final_project/assets/qn.png", tenorx, tenory, n, voice = "tenor")
+    tenorx += 100
+    tenornotelist.append(tenornote)
+    bassnote = PredictedNote("final_project/assets/qn-down.png", bassx, bassy, n, voice = "bass")
+    bassx += 100
+    bassnotelist.append(bassnote)
 
-for k in range(8):
-    note = PredictedNote("final_project/assets/qn.png", xval, yval, x)
-
-for l in range(8):
-    note = PredictedNote("final_project/assets/qn.png", xval, yval, x)
-
+for altonote in altonotelist:
+    altonotes.add(altonote)
+for tenornote in tenornotelist:
+    tenornotes.add(tenornote)
+for bassnote in bassnotelist:
+    bassnotes.add(bassnote)
 
 playbtn = Play()
 generatebtn = GenerateBtn()
@@ -248,6 +258,7 @@ while running:
                 for note in notelist:
                     inputsequence.append(note.noteVal)
                 note2seq, note3seq, note4seq = generate(inputsequence)
+                pygame.event.post(pygame.event.Event(GENERATE))
         
     if playbtn.playing == True:
         playtime += 1
@@ -272,24 +283,40 @@ while running:
             activeID = None
 
     for i in range(5):
-        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 230+(20*i), w-100, 3))
-        pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 375+(20*i), w-100, 3))
+        pygame.draw.rect(screen, (0, 0, 0), 
+                         pygame.Rect(50, 230+(20*i), w-100, 3))
+        pygame.draw.rect(screen, (0, 0, 0), 
+                         pygame.Rect(50, 395+(20*i), w-100, 3))
      
-    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 230, 3, 228))
-    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(520, 230, 3, 228))
-    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1020, 230, 3, 228))
-    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1030, 230, 4, 228))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 230, 3, 248))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(520, 230, 3, 248))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1020, 230, 3, 248))
+    pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1030, 230, 4, 248))
 
     
     for x in range(len(notes)):
         if notelist[x].noteVal > 68:
-            pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(151+(100*x), 210, 30, 3))
+            pygame.draw.rect(screen, (0, 0, 0), 
+                             pygame.Rect(151+(100*x), 210, 30, 3))
             if notelist[x].noteVal > 71:
-                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(151+(100*x), 190, 30, 3)) 
+                pygame.draw.rect(screen, (0, 0, 0), 
+                                 pygame.Rect(151+(100*x), 190, 30, 3)) 
         if notelist[x].noteVal in [61, 66, 68]:
-            screen.blit(font.render("#", True, (0, 0, 0)), (notelist[x].rect[0]-10, notelist[x].rect[1]+47))
+            screen.blit(font.render("#", True, (0, 0, 0)), 
+                        (notelist[x].rect[0]-10, notelist[x].rect[1]+47))
         elif notelist[x].noteVal in [63, 70]:
-            screen.blit(font.render("b", True, (0, 0, 0)), (notelist[x].rect[0]-10, notelist[x].rect[1]+47))
+            screen.blit(font.render("b", True, (0, 0, 0)), 
+                        (notelist[x].rect[0]-10, notelist[x].rect[1]+47))
+    
+    for altonote in altonotes:
+        altonote.update(events)
+        altonote.draw(screen)
+    for tenornote in tenornotes:
+        tenornote.update(events)
+        tenornote.draw(screen)
+    for bassnote in bassnotes:
+        bassnote.update(events)
+        bassnote.draw(screen)
 
     for note in notes:
         note.update(events)
@@ -304,9 +331,8 @@ while running:
     brace.draw(screen)
 
     for i in range(8):
-        screen.blit(font.render(str(notelist[i].noteVal) + " - " + str(valtoNotes[notelist[i].noteVal]), True, (0, 0, 0)), (145+(100*i), 130))
-
-
+        screen.blit(font.render(str(notelist[i].noteVal) + " - " + str(valtoNotes[notelist[i].noteVal]),
+                                True, (0, 0, 0)), (145+(100*i), 130))
 
     pygame.display.flip()
     # limits FPS to 30
