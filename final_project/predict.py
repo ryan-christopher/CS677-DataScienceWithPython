@@ -145,17 +145,13 @@ def generate(sequence):
     alto, tenor, bass = [], [], []
 
     bass.append(bass_log_reg.predict(pd.DataFrame([[soprano[0], soprano[0]]], 
-                                                  columns = ["Soprano", "Prev"]))[0] - 12)
+                                                    columns = ["Soprano", "Prev"]))[0] - 12)
     tenor.append(tenor_log_reg.predict(pd.DataFrame([[soprano[0], bass[0], soprano[0]]], 
                                                     columns = ["Soprano", "Bass", "Prev"]))[0] - 12)
     alto.append(first_alto_log_reg.predict(pd.DataFrame([[soprano[0], bass[0], tenor[0]]], 
                                                         columns = ["Soprano", "Bass", "Tenor"]))[0] - 12)
 
     for x in range(1, len(soprano)):
-        print("Soprano", soprano[x-1])
-        print("Alto", alto[x-1])
-        print("Tenor", tenor[x-1])
-        print("Bass", bass[x-1])
         bass.append(bass_log_reg.predict(pd.DataFrame([[soprano[x], bass[x-1]]], 
                                                       columns = ["Soprano", "Prev"]))[0] - 12)
         tenor.append(tenor_log_reg.predict(pd.DataFrame([[soprano[x], bass[x], tenor[x-1]]], 
@@ -163,8 +159,9 @@ def generate(sequence):
         alto.append(alto_log_reg.predict(pd.DataFrame([[soprano[x], bass[x], tenor[x], alto[x-1]]], 
                                                       columns = ["Soprano", "Bass", "Tenor", "Prev"]))[0] - 12)
 
-    print(soprano)
-    print(alto)
-    print(tenor)
-    print(bass)
+
+    #print(soprano)
+    #print(alto)
+    #print(tenor)
+    #print(bass)
     return alto, tenor, bass

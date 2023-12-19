@@ -302,13 +302,15 @@ while running:
         if playtime % 23 == 0 and playindex < 8:
             notelist[playindex].toggleActive()
             note1 = mixer.Sound("final_project/assets/" + str(notelist[playindex].noteVal) + ".wav")
-            note2 = mixer.Sound("final_project/assets/" + str(note2seq[playindex]) + ".wav")
-            note3 = mixer.Sound("final_project/assets/" + str(note3seq[playindex]) + ".wav")
-            note4 = mixer.Sound("final_project/assets/" + str(note4seq[playindex]) + ".wav")
+            if len(note2seq) > 0:
+                note2 = mixer.Sound("final_project/assets/" + str(note2seq[playindex]) + ".wav")
+                note3 = mixer.Sound("final_project/assets/" + str(note3seq[playindex]) + ".wav")
+                note4 = mixer.Sound("final_project/assets/" + str(note4seq[playindex]) + ".wav")
             mixer.find_channel(True).play(note1)
-            mixer.find_channel(True).play(note2)
-            mixer.find_channel(True).play(note3)
-            mixer.find_channel(True).play(note4)
+            if len(note2seq) > 0:
+                mixer.find_channel(True).play(note2)
+                mixer.find_channel(True).play(note3)
+                mixer.find_channel(True).play(note4)
             playindex += 1
         if playtime > 210:
             playbtn.playing = False
