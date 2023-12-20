@@ -10,6 +10,7 @@ playingnotes = False
 inputsequence = []
 mixer.init()
 
+# dict of note vals to names for displays
 valtoNotes = {
     24 : "C",  25 : "C#", 26 : "D",  27 : "Eb", 28 : "E",  29 : "F", 
     30 : "F#", 31 : "G",  32 : "G#", 33 : "A",  34 : "Bb", 35 : "B",
@@ -22,9 +23,10 @@ valtoNotes = {
     72 : "C"
 }
 
-
+# create event when notes are generated
 GENERATE = pygame.USEREVENT + 1
 
+# note class that is interactive for the user
 class Note(pygame.sprite.Sprite):
     def __init__(self, pic, x, y, id):
         super().__init__()
@@ -36,6 +38,7 @@ class Note(pygame.sprite.Sprite):
         self.id = id
         self.noteVal = 60
 
+    # allow user to change pitch and position
     def toggleActive(self):
         self.isActive = not self.isActive
         if self.isActive == True:
@@ -82,6 +85,8 @@ class Note(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
 
+
+# non controllable note for displaying the predicted chords
 class PredictedNote(pygame.sprite.Sprite):
     def __init__(self, pic, x, y, id, voice):
         super().__init__()
@@ -132,24 +137,25 @@ class PredictedNote(pygame.sprite.Sprite):
                         self.noteVal -= 1
                 if self.voice == 'bass' and self.noteVal < note4seq[self.id]:
                     while self.noteVal < note4seq[self.id]:
-                        if self.noteVal in [60, 63, 65, 67, 70, 48, 51, 53, 55, 58, 36, 39, 41, 43, 46, 24, 27, 29, 31, 34]:
+                        if self.noteVal in [60, 63, 65, 67, 70, 48, 51, 53, 55, 58, 
+                                            36, 39, 41, 43, 46, 24, 27, 29, 31, 34]:
                             self.rect.move_ip(0, 0)
                         else:
                             self.rect.move_ip(0, -10)
                         self.noteVal += 1
                 if self.voice == 'bass' and self.noteVal > note4seq[self.id]:
                     while self.noteVal > note4seq[self.id]:
-                        if self.noteVal in [61, 64, 66, 68, 71, 49, 52, 54, 56, 59, 37, 40, 42, 44, 47, 25, 28, 30, 32, 35]:
+                        if self.noteVal in [61, 64, 66, 68, 71, 49, 52, 54, 56, 59, 
+                                            37, 40, 42, 44, 47, 25, 28, 30, 32, 35]:
                             self.rect.move_ip(0, 0)
                         else:
                             self.rect.move_ip(0, 10)
                         self.noteVal -= 1
 
-
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
 
-
+# add play button to hear output 
 class Play(pygame.sprite.Sprite):
     def __init__(self):
         self.pic = pygame.image.load("final_project/assets/play.png")
@@ -161,7 +167,7 @@ class Play(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
 
-
+# add button to generate predictions from user input
 class GenerateBtn(pygame.sprite.Sprite):
     def __init__(self):
         self.rect = pygame.Rect((900, 600), (100, 100))
@@ -170,7 +176,7 @@ class GenerateBtn(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(font.render("Generate", True, (0, 0, 0)), (900, 600))
 
-
+# staff class used for displaying the clefs and brace
 class Staff(pygame.sprite.Sprite):
     def __init__(self, pic, x, y, scalex, scaley):
         self.pic = pygame.image.load(pic)
@@ -181,7 +187,7 @@ class Staff(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.pic, self.rect)
 
-
+# instantiate clefs and brace
 treble = Staff("final_project/assets/treble.png", 45, 220, 70, 110)
 bass = Staff("final_project/assets/bass.png", 55, 400, 50, 65)
 brace = Staff("final_project/assets/brace.png", -10, 218, 50, 270)
@@ -193,6 +199,7 @@ altonotes = pygame.sprite.Group()
 tenornotes = pygame.sprite.Group()
 bassnotes = pygame.sprite.Group()
 notelist, altonotelist, tenornotelist, bassnotelist = [], [], [], []
+# positions for the user, alto, tenor, and bass notes
 xval, yval, altox, altoy = 150, 203, 145, 249
 tenorx, tenory, bassx, bassy = 150, 317, 145, 435
 
@@ -304,8 +311,8 @@ while running:
             note1 = mixer.Sound("final_project/assets/" + str(notelist[playindex].noteVal) + ".wav")
             if len(note2seq) > 0:
                 note2 = mixer.Sound("final_project/assets/" + str(note2seq[playindex]) + ".wav")
-                note3 = mixer.Sound("final_project/assets/" + str(note3seq[playindex]) + ".wav")
-                note4 = mixer.Sound("final_project/assets/" + str(note4seq[playindex]) + ".wav")
+                note3 = mixer.Sound("final_project/assets/" + str(note3seq[playindex]-12) + ".wav")
+                note4 = mixer.Sound("final_project/assets/" + str(note4seq[playindex]-12) + ".wav")
             mixer.find_channel(True).play(note1)
             if len(note2seq) > 0:
                 mixer.find_channel(True).play(note2)
@@ -321,18 +328,20 @@ while running:
                 note.toggleActive()
             activeID = None
 
+    # draw staff lines for the notes
     for i in range(5):
         pygame.draw.rect(screen, (0, 0, 0), 
                          pygame.Rect(50, 230+(20*i), w-100, 3))
         pygame.draw.rect(screen, (0, 0, 0), 
                          pygame.Rect(50, 395+(20*i), w-100, 3))
-     
+    
+    # draw measure lines and end lines
     pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(50, 230, 3, 248))
     pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(520, 230, 3, 248))
     pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1020, 230, 3, 248))
     pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(1030, 230, 4, 248))
 
-    
+    # position notes with even spacing for each voice
     for x in range(len(notes)):
         if notelist[x].noteVal > 68:
             pygame.draw.rect(screen, (0, 0, 0), 
@@ -346,6 +355,7 @@ while running:
         if bassnotelist[x].noteVal < 41:
             pygame.draw.rect(screen, (0, 0, 0), 
                              pygame.Rect(151+(100*x), 497, 30, 3))
+        # display sharp and flat values for user notes
         if notelist[x].noteVal in [61, 66, 68]:
             screen.blit(font.render("#", True, (0, 0, 0)), 
                         (notelist[x].rect[0]-10, notelist[x].rect[1]+47))
@@ -353,6 +363,7 @@ while running:
             screen.blit(font.render("b", True, (0, 0, 0)), 
                         (notelist[x].rect[0]-10, notelist[x].rect[1]+47))
     
+    # update each note of each voice
     for altonote in altonotes:
         altonote.update(events)
         altonote.draw(screen)
@@ -362,7 +373,6 @@ while running:
     for bassnote in bassnotes:
         bassnote.update(events)
         bassnote.draw(screen)
-
     for note in notes:
         note.update(events)
         note.draw(screen)
@@ -375,11 +385,13 @@ while running:
     bass.draw(screen)
     brace.draw(screen)
 
+    # display note values and names for user above the staff
     for i in range(8):
         screen.blit(font.render(str(notelist[i].noteVal) + " - " + str(valtoNotes[notelist[i].noteVal]),
                                 True, (0, 0, 0)), (145+(100*i), 130))
 
     pygame.display.flip()
+
     # limits FPS to 30
     dt = clock.tick(30) / 1000
 

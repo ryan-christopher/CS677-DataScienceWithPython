@@ -4,14 +4,17 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
+# load data to dataframe
 data = pd.read_json(path_or_buf='final_project/data-test-100.jsonl', lines=True)
+# remove extra information
 data = data.drop(['backend','composition_time', 'country', 'loops_listened', 'request_id', 'session_id'], axis = 1)
 
+# create dataframes to store relevant information for each voice
 bassdf = pd.DataFrame(columns = ["Soprano", "Prev", "Class"])
 tenordf = pd.DataFrame(columns = ["Soprano", "Bass", "Prev", "Class"])
 altodf = pd.DataFrame(columns = ["Soprano", "Bass", "Tenor", "Prev", "Class"])
 
-
+# format_output takes the data and only stores the note information for submissions marked "pleasant" by a 2
 def format_output(df):
     if data['feedback'][0][0] == "2":
 
@@ -21,6 +24,7 @@ def format_output(df):
 
         soprano, alto, tenor, bass = [], [], [], []
 
+        # loosely align timing by comparing start times of each voice
         for note in data['output_sequence'][0][0]['notes']:
             if 'startTime' not in note.keys():
                 note['startTime'] = 0.0
@@ -73,12 +77,14 @@ def format_output(df):
                 bass.append(soprano[x])
             x += 1
 
+        # store only note values
         for x in range(len(soprano)):
             soprano[x] = soprano[x][1]
             alto[x] = alto[x][1]
             tenor[x] = tenor[x][1]
             bass[x] = bass[x][1]
 
+        # add corresponding note values to each dataframe
         for x in range(len(soprano)-1, 0, -1):
             bassdf = pd.concat([pd.DataFrame([[soprano[x], bass[x-1], bass[x]]], 
                                              columns = bassdf.columns), bassdf])
@@ -95,6 +101,8 @@ def format_output(df):
 
 data = data.apply(format_output, axis = 1)
 
+
+# separate bass x and y values, train, then predict
 bass_train, bass_test = train_test_split(bassdf, test_size = 0.3, train_size = 0.7, random_state = 13)
 bass_x_train = bass_train.iloc[:, 0:2]
 bass_y_train = bass_train["Class"].astype(int)
@@ -105,7 +113,9 @@ bass_log_reg.fit(bass_x_train,bass_y_train)
 bass_y_predict = bass_log_reg.predict(bass_x_test)
 #print("Bass")
 #print(accuracy_score(bass_y_test, bass_y_predict))
+#print(bass_y_predict)
 
+# separate tenor x and y values, train, then predict
 tenor_train, tenor_test = train_test_split(tenordf, test_size = 0.3, train_size = 0.7, random_state = 13)
 tenor_x_train = tenor_train.iloc[:, 0:3]
 tenor_y_train = tenor_train["Class"].astype(int)
@@ -116,7 +126,9 @@ tenor_log_reg.fit(tenor_x_train,tenor_y_train)
 tenor_y_predict = tenor_log_reg.predict(tenor_x_test)
 #print("Tenor")
 #print(accuracy_score(tenor_y_test, tenor_y_predict))
+#print(tenor_y_predict)
 
+# separate singular alto x and y values, train, then predict
 first_alto_train, first_alto_test = train_test_split(altodf, test_size = 0.3, train_size = 0.7, random_state = 13)
 first_alto_x_train = first_alto_train.iloc[:, 0:3]
 first_alto_y_train = first_alto_train["Class"].astype(int)
@@ -128,6 +140,7 @@ first_alto_y_predict = first_alto_log_reg.predict(first_alto_x_test)
 #print("First alto")
 #print(accuracy_score(first_alto_y_test, first_alto_y_predict))
 
+# separate alto x and y values, train, then predict
 alto_train, alto_test = train_test_split(altodf, test_size = 0.3, train_size = 0.7, random_state = 13)
 alto_x_train = alto_train.iloc[:, 0:4]
 alto_y_train = alto_train["Class"].astype(int)
@@ -138,19 +151,23 @@ alto_log_reg.fit(alto_x_train,alto_y_train)
 alto_y_predict = alto_log_reg.predict(alto_x_test)
 #print("Alto")
 #print(accuracy_score(alto_y_test, alto_y_predict))
+#print(alto_y_predict)
 
-
+# generate takes as input the users sequence, then predicts each note for the
+# alto, tenor, and bass voices
 def generate(sequence):
     soprano = sequence
     alto, tenor, bass = [], [], []
 
+    # for first bass and tenor note, use soprano as "previous" to enforce key in beginning
     bass.append(bass_log_reg.predict(pd.DataFrame([[soprano[0], soprano[0]]], 
                                                     columns = ["Soprano", "Prev"]))[0] - 12)
     tenor.append(tenor_log_reg.predict(pd.DataFrame([[soprano[0], bass[0], soprano[0]]], 
                                                     columns = ["Soprano", "Bass", "Prev"]))[0] - 12)
     alto.append(first_alto_log_reg.predict(pd.DataFrame([[soprano[0], bass[0], tenor[0]]], 
                                                         columns = ["Soprano", "Bass", "Tenor"]))[0] - 12)
-
+    
+    # predict each value, then use the predicted value as part of the input for the subsequent predictions
     for x in range(1, len(soprano)):
         bass.append(bass_log_reg.predict(pd.DataFrame([[soprano[x], bass[x-1]]], 
                                                       columns = ["Soprano", "Prev"]))[0] - 12)
@@ -158,8 +175,7 @@ def generate(sequence):
                                                         columns = ["Soprano", "Bass", "Prev"]))[0] - 12)
         alto.append(alto_log_reg.predict(pd.DataFrame([[soprano[x], bass[x], tenor[x], alto[x-1]]], 
                                                       columns = ["Soprano", "Bass", "Tenor", "Prev"]))[0] - 12)
-
-
+        
     #print(soprano)
     #print(alto)
     #print(tenor)
